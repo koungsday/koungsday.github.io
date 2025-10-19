@@ -3,551 +3,387 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prismatic Burst Effect</title>
+    <title>Koung's Day - 폭스바겐 공식딜러 남궁환</title>
+    <link rel="icon" href="https://i.imgur.com/TSuTyp4.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            background: #000;
-            font-family: system-ui, -apple-system, sans-serif;
-        }
-        
-        #container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-        }
-        
-        canvas {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-        }
-        
-        #controls {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 20px;
-            border-radius: 10px;
-            color: white;
-            min-width: 200px;
-            backdrop-filter: blur(10px);
-        }
-        
-        #controls h3 {
-            margin-bottom: 15px;
-            font-size: 16px;
-        }
-        
-        .control-group {
-            margin-bottom: 15px;
-        }
-        
-        .control-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 12px;
-        }
-        
-        .control-group input[type="range"] {
-            width: 100%;
-        }
-        
-        .control-group select {
-            width: 100%;
-            padding: 5px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 5px;
-        }
-        
-        .control-group button {
-            width: 100%;
-            padding: 8px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        
-        .control-group button:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
+        html{scroll-behavior:smooth}section[id],footer[id]{scroll-margin-top:80px}:root{--vw-blue:#004d8f;--dark-grey:#0f172a;--white:#fff;--text-color:#475569;--dark-bg:#0f172a;--light-grey:#f8fafc}body{font-family:'Noto Sans KR',sans-serif;background-color:var(--white);color:var(--text-color);-webkit-font-smoothing:antialiased;overflow-x:hidden}.font-brand{font-family:'Poppins',sans-serif;letter-spacing:-0.5px}.scroll-reveal{opacity:0;transform:translateY(30px);transition:opacity .7s cubic-bezier(.4,.0,.2,1),transform .7s cubic-bezier(.4,.0,.2,1)}.scroll-reveal.visible{opacity:1;transform:translateY(0)}.header-scrolled{background:rgba(255,255,255,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:0 8px 16px -2px rgba(15,23,42,.08);border-bottom:1px solid rgba(203,213,225,.3)}.cta-button{transition:all .3s cubic-bezier(.4,.0,.2,1);position:relative;overflow:hidden}.cta-button::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:rgba(255,255,255,.15);transition:left .3s ease}.cta-button:hover::before{left:100%}.cta-button:hover{transform:translateY(-3px);box-shadow:0 12px 24px -4px rgba(0,77,143,.25)}.hero-text-shadow{text-shadow:0 4px 16px rgba(0,0,0,.5)}.header-text-border{text-shadow:-1.5px -1.5px 0 #fff,1.5px -1.5px 0 #fff,-1.5px 1.5px 0 #fff,1.5px 1.5px 0 #fff}.hero-cta-button{background:rgba(30,41,59,0.7);color:#fff;border:1.5px solid rgba(255,255,255,0.3);border-radius:12px;padding:.875rem 2.25rem;font-weight:600;letter-spacing:.5px;position:relative;overflow:hidden;transition:all .3s cubic-bezier(.4,.0,.2,1);backdrop-filter:blur(4px)}.hero-cta-button::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.1) 0%,transparent 50%,rgba(255,255,255,0.05) 100%);opacity:0;transition:opacity .3s ease}.hero-cta-button:hover{border-color:rgba(255,255,255,0.6);background:rgba(30,41,59,0.9);box-shadow:0 0 20px rgba(255,255,255,0.1)}.hero-cta-button:hover::before{opacity:1}.hero-cta-button span{position:relative;z-10}
+.shiny-button-text{position:relative;color:#fff;display:inline-block}.shiny-button-text::before{content:attr(data-text);position:absolute;left:0;top:0;width:100%;height:100%;background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.4) 50%,transparent 70%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shimmer 3s ease-in-out infinite}@keyframes shimmer{0%{background-position:150%}100%{background-position:-150%}}.service-tab{transition:all .4s cubic-bezier(.4,.0,.2,1);color:var(--text-color);font-weight:500;position:relative;font-size:.95rem;z-index:20}.service-tab.active{color:#fff;font-weight:600;text-shadow:0 1px 3px rgba(0,77,143,.4)}.tab-glider{background:linear-gradient(135deg,#004d8f,#0066bb);box-shadow:0 8px 16px rgba(0,77,143,.2),inset 0 1px 2px rgba(255,255,255,.1);transition:all .4s cubic-bezier(.25,.46,.45,.94);border-radius:10px;position:absolute}.service-card{background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%);border:1px solid rgba(203,213,225,.5);border-radius:16px;transition:all .4s cubic-bezier(.4,.0,.2,1);position:relative;overflow:hidden}.service-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,rgba(0,77,143,.05) 0%,transparent 100%);opacity:0;transition:opacity .4s ease}.service-card:hover{border-color:rgba(0,77,143,.2);box-shadow:0 20px 40px rgba(0,77,143,.1);transform:translateY(-4px)}.service-card:hover::before{opacity:1}.external-link{position:relative;overflow:hidden;display:inline-flex;align-items:center}.external-link::after{content:'';position:absolute;top:0;right:-30px;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transition:right .6s cubic-bezier(.4,.0,.2,1)}.external-link:hover::after{right:100%}.external-link:hover{box-shadow:0 8px 20px rgba(0,77,143,.35)!important;background-color:rgba(0,100,180,.9)!important}.footer-link{transition:all .3s ease;position:relative;color:#94a3b8}.footer-link:hover{color:#fff}.footer-link::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:1.5px;background:#fff;transition:width .3s ease}.footer-link:hover::after{width:100%}#prismatic-loader{position:fixed;inset:0;z-index:100;background:#fff;transition:opacity .8s ease-out,visibility .8s ease-out}#prismatic-loader.fade-out{opacity:0;visibility:hidden}#prismatic-canvas-container{position:absolute;inset:0;width:100%;height:100%}.slide{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;transition:opacity 2s ease-in-out;z-index:1;background-size:cover;background-position:center;will-change:opacity}.slide.active{opacity:1;z-index:2}@media (max-width:767px){html{font-size:92%}.hero-cta-button{padding:.75rem 1.75rem}}
     </style>
 </head>
-<body>
-    <div id="container"></div>
+<body class="bg-white">
+    <div id="prismatic-loader"><div id="prismatic-canvas-container"></div></div>
     
-    <div id="controls">
-        <h3>Controls</h3>
-        
-        <div class="control-group">
-            <label>Intensity: <span id="intensityVal">2.0</span></label>
-            <input type="range" id="intensity" min="0" max="5" step="0.1" value="2">
+    <header id="main-header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+        <div class="container mx-auto px-6 py-5 flex justify-between items-center">
+            <div class="font-brand text-2xl font-bold text-gray-800 header-text-border tracking-tight">Koung's Day</div>
+            <nav class="hidden md:flex items-center space-x-10">
+                <a href="#contact" class="bg-blue-800 text-white font-semibold py-2.5 px-6 rounded-lg cta-button transition-all duration-300"><i class="fas fa-phone-alt mr-2"></i>상담 문의</a>
+            </nav>
+            <div class="md:hidden">
+                <a href="#contact" class="bg-blue-800 text-white font-semibold py-2.5 px-4 rounded-lg cta-button transition-all duration-300"><i class="fas fa-phone-alt"></i></a>
+            </div>
         </div>
-        
-        <div class="control-group">
-            <label>Speed: <span id="speedVal">0.5</span></label>
-            <input type="range" id="speed" min="0" max="2" step="0.1" value="0.5">
+    </header>
+
+    <main>
+        <section class="relative h-screen flex items-center justify-center text-white text-center overflow-hidden">
+            <div id="hero-slider-container" class="absolute inset-0 z-0">
+                <div id="prismatic-loader"><div id="prismatic-canvas-container"></div></div>
+            </div>
+            
+            <div class="relative z-10 p-8 rounded-3xl max-w-4xl mx-4">
+                <div class="mb-6 inline-block">
+                    <span class="text-sm font-semibold tracking-widest text-blue-200 uppercase">Volkswagen Official Dealer</span>
+                </div>
+                <h1 class="text-5xl md:text-7xl font-black leading-tight mb-6 hero-text-shadow tracking-tight">폭스바겐을 만나는<br><span class="text-white">가장 완벽한 순간</span></h1>
+                <p class="text-lg md:text-xl mb-10 max-w-2xl mx-auto hero-text-shadow leading-relaxed text-blue-100">신뢰할 수 있는 정보와 특별한 서비스를 통해<br>당신의 폭스바겐 여정을 시작하세요.</p>
+                <a href="#services" class="hero-cta-button inline-block">
+                  <span class="shiny-button-text relative z-10" data-text="주요 서비스 확인하기">주요 서비스 확인하기</span>
+                </a>
+            </div>
+
+            <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10">
+                <div class="animate-bounce">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <section id="services" class="py-24 bg-gradient-to-b from-white via-slate-50 to-white relative">
+            <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                <div class="absolute top-20 right-0 w-96 h-96 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-5"></div>
+                <div class="absolute bottom-20 left-0 w-96 h-96 bg-slate-100 rounded-full mix-blend-multiply filter blur-3xl opacity-5"></div>
+            </div>
+
+            <div class="container mx-auto px-6 relative z-10">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-black text-gray-900 mb-6 scroll-reveal">고객 맞춤형 서비스</h2>
+                    <p class="text-lg text-gray-600 max-w-3xl mx-auto scroll-reveal leading-relaxed">실시간 데이터와 전문 시스템을 활용하여<br class="hidden sm:block">정확한 견적과 할부 계산, 투명한 계약 진행 현황을 확인하세요.</p>
+                </div>
+
+                <div id="service-tabs" class="relative flex flex-col sm:flex-row justify-center mb-16 bg-slate-100 rounded-xl p-2 max-w-2xl mx-auto scroll-reveal border border-slate-200">
+                    <div id="tab-glider" class="tab-glider absolute rounded-lg"></div>
+                    <button data-tab="calculator" class="service-tab relative z-20 flex-1 py-3 px-6 text-center font-medium active transition-colors duration-300">
+                        <i class="fas fa-calculator mr-2"></i>견적 계산기
+                    </button>
+                    <button data-tab="installment" class="service-tab relative z-20 flex-1 py-3 px-6 text-center font-medium transition-colors duration-300">
+                        <i class="fas fa-wallet mr-2"></i>할부 계산기
+                    </button>
+                    <button data-tab="tracker" class="service-tab relative z-20 flex-1 py-3 px-6 text-center font-medium transition-colors duration-300">
+                        <i class="fas fa-truck mr-2"></i>계약 조회
+                    </button>
+                </div>
+
+                <div id="service-content" class="scroll-reveal max-w-4xl mx-auto">
+                    <div id="calculator-content" class="service-tab-content service-card p-8 md:p-14">
+                        <div class="grid md:grid-cols-2 gap-10 items-center">
+                            <div>
+                                <img src="https://i.imgur.com/1EiNSrz.png" alt="견적기 예시" class="rounded-xl shadow-lg w-full">
+                            </div>
+                            <div>
+                                <h3 class="text-3xl md:text-4xl font-black text-gray-900 mb-4">내 손안의 컨설턴트</h3>
+                                <p class="text-gray-600 mb-8 leading-relaxed text-lg">복잡한 자동차 구매, 공식 프로모션과 최신 정보를 반영한 실구매가 계산기로 투명하고 정확한 비용을 직접 확인할 수 있습니다.</p>
+                                <a href="https://www.koungs.day/%E3%85%A4%E3%85%A4%EA%B0%84%ED%8E%B8-%EA%B2%AC%EC%A0%81-%EA%B3%A0%EA%B0%9D%EC%9A%A9" class="external-link inline-block bg-blue-800 text-white font-bold py-3 px-8 rounded-lg cta-button hover:bg-blue-900" target="_blank" rel="noopener noreferrer">견적 계산기 바로가기 <i class="fas fa-arrow-right ml-2"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="installment-content" class="service-tab-content service-card p-8 md:p-14 hidden opacity-0">
+                        <div class="grid md:grid-cols-2 gap-10 items-center">
+                            <div>
+                                <img src="https://imgur.com/u3gDVEb.png" alt="할부 계산기" class="rounded-xl shadow-lg w-full">
+                            </div>
+                            <div>
+                                <h3 class="text-3xl md:text-4xl font-black text-gray-900 mb-4">나만의 맞춤 금융 플랜</h3>
+                                <p class="text-gray-600 mb-8 leading-relaxed text-lg">폭스바겐 파이낸셜 서비스와 연동하여 최적의 금융 프로그램을 찾고 월 납입금을 시뮬레이션 해볼 수 있습니다.</p>
+                                <a href="https://www.koungs.day/%E3%85%A4%E3%85%A4%ED%95%A0%EB%B6%80-%EA%B3%84%EC%82%B0-%EA%B3%A0%EA%B0%9D%EC%9A%A9" class="external-link inline-block bg-blue-800 text-white font-bold py-3 px-8 rounded-lg cta-button hover:bg-blue-900" target="_blank" rel="noopener noreferrer">할부 계산기 바로가기 <i class="fas fa-arrow-right ml-2"></i></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tracker-content" class="service-tab-content service-card p-8 md:p-14 hidden opacity-0">
+                        <div class="grid md:grid-cols-2 gap-10 items-center">
+                            <div>
+                                <img src="https://i.imgur.com/MiWjT9J.png" alt="계약 조회" class="rounded-xl shadow-lg w-full">
+                            </div>
+                            <div>
+                                <h3 class="text-3xl md:text-4xl font-black text-gray-900 mb-4">기다림의 모든 순간을 투명하게</h3>
+                                <p class="text-gray-600 mb-8 leading-relaxed text-lg">차량이 준비되는 모든 과정을 투명하게 공유합니다. 계약 정보로 내 순번과 진행 상황을 확인하세요.</p>
+                                <a href="https://www.koungs.day/%EB%82%B4-%EA%B3%84%EC%95%BD-%ED%98%84%ED%99%A9-%EC%88%9C%EB%B2%88" class="external-link inline-block bg-blue-800 text-white font-bold py-3 px-8 rounded-lg cta-button hover:bg-blue-900" target="_blank" rel="noopener noreferrer">내 계약 조회하기 <i class="fas fa-arrow-right ml-2"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-20 bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10">
+                <div class="absolute top-0 right-0 w-96 h-96 bg-white rounded-full mix-blend-multiply filter blur-3xl"></div>
+                <div class="absolute bottom-0 left-0 w-96 h-96 bg-white rounded-full mix-blend-multiply filter blur-3xl"></div>
+            </div>
+            <div class="container mx-auto px-6 text-center relative z-10">
+                <h2 class="text-3xl md:text-4xl font-black text-white mb-6">지금 바로 상담받으세요</h2>
+                <p class="text-blue-100 mb-8 text-lg">폭스바겐 공식딜러 남궁환과 함께 최고의 차량 구매 경험을 해보세요.</p>
+                <a href="tel:010-4454-5212" class="inline-block bg-white text-blue-800 font-bold py-3 px-8 rounded-lg cta-button hover:bg-slate-50"><i class="fas fa-phone-alt mr-2"></i>전화 상담하기</a>
+            </div>
+        </section>
+    </main>
+
+    <footer id="contact" class="bg-slate-900 text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-5">
+            <div class="absolute top-20 right-20 w-64 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl"></div>
         </div>
-        
-        <div class="control-group">
-            <label>Animation Type:</label>
-            <select id="animType">
-                <option value="0">Rotate</option>
-                <option value="1" selected>Rotate 3D</option>
-                <option value="2">Hover</option>
-            </select>
+        <div class="container mx-auto px-6 py-24 relative z-10">
+            <div class="lg:grid lg:grid-cols-2 lg:gap-16 lg:items-center mb-16">
+                <div class="scroll-reveal mb-12 lg:mb-0">
+                    <div>
+                        <h2 class="text-4xl md:text-5xl font-black mb-6">나의 폭스바겐<br>파트너</h2>
+                        <p class="text-lg text-slate-300 mb-10 leading-relaxed max-w-lg">안녕하세요 폭스바겐 공식딜러 남궁환입니다.<br>삶과 스타일을 담는 소중한 공간이자 여정을 함께하겠습니다.</p>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <a href="tel:010-4454-5212" class="inline-block bg-white text-blue-800 font-bold py-3 px-8 rounded-lg cta-button text-center transition-all duration-300 hover:bg-slate-50"><i class="fas fa-phone-alt mr-2"></i>전화 상담</a>
+                            <a href="#services" class="inline-block bg-blue-700 text-white font-bold py-3 px-8 rounded-lg cta-button text-center transition-all duration-300 hover:bg-blue-600"><i class="fas fa-calendar mr-2"></i>예약하기</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="scroll-reveal" style="transition-delay:100ms">
+                    <img src="https://i.imgur.com/aT4VMm1.png" alt="명함" class="rounded-2xl shadow-2xl w-full">
+                </div>
+            </div>
+            <div class="border-t border-slate-700 pt-10">
+                <div class="grid md:grid-cols-3 gap-8 mb-10">
+                    <div>
+                        <h4 class="font-semibold text-white mb-4">연락처</h4>
+                        <a href="tel:010-4454-5212" class="footer-link">
+                            <i class="fas fa-phone mr-2"></i>010-4454-5212
+                        </a>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-white mb-4">위치</h4>
+                        <p class="text-slate-400">폭스바겐 송파전시장</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-white mb-4">팔로우</h4>
+                        <div class="flex gap-4">
+                            <a href="#" class="footer-link"><i class="fas fa-facebook-f"></i></a>
+                            <a href="#" class="footer-link"><i class="fas fa-instagram"></i></a>
+                            <a href="#" class="footer-link"><i class="fas fa-youtube"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-slate-500 text-sm text-center border-t border-slate-700 pt-8">
+                    <p>&copy; 2025 Koung's Day. All rights reserved. | Volkswagen Official Dealer</p>
+                </div>
+            </div>
         </div>
-        
-        <div class="control-group">
-            <label>Distortion: <span id="distortVal">0</span></label>
-            <input type="range" id="distort" min="0" max="10" step="0.5" value="0">
-        </div>
-        
-        <div class="control-group">
-            <label>Ray Count: <span id="rayCountVal">0</span></label>
-            <input type="range" id="rayCount" min="0" max="12" step="1" value="0">
-        </div>
-        
-        <div class="control-group">
-            <button id="pauseBtn">Pause</button>
+    </footer>
+
+    <div id="external-link-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4 backdrop-blur-sm transition-opacity duration-300">
+        <div id="modal-content" class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md text-center transform scale-95 opacity-0 transition-all duration-300">
+            <div class="mb-6">
+                <i class="fas fa-external-link-alt text-blue-800 text-4xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-3">페이지 이동</h3>
+            <p class="text-gray-600 mb-8">선택하신 페이지로 이동하시겠습니까?</p>
+            <div class="flex justify-center gap-4">
+                <button id="modal-cancel" class="bg-slate-100 text-gray-700 font-bold py-2.5 px-6 rounded-lg hover:bg-slate-200 transition-colors">취소</button>
+                <a id="modal-confirm" href="#" target="_blank" class="bg-blue-800 text-white font-bold py-2.5 px-6 rounded-lg cta-button">이동</a>
+            </div>
         </div>
     </div>
 
     <script>
-        const vertexShader = `#version 300 es
-            in vec2 position;
-            in vec2 uv;
-            out vec2 vUv;
-            void main() {
-                vUv = uv;
-                gl_Position = vec4(position, 0.0, 1.0);
-            }
-        `;
+const vs=`#version 300 es
+in vec2 position;in vec2 uv;out vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position,0.,1.);}`;
+const fs=`#version 300 es
+precision highp float;out vec4 fragColor;uniform vec2 uResolution;uniform float uTime,uIntensity,uSpeed;uniform int uAnimType;float hash21(vec2 p){p=floor(p);return fract(52.9829189*fract(dot(p,vec2(.065,.005))));}mat2 rot30(){return mat2(.8,-.5,.5,.8);}float layeredNoise(vec2 fragPx){vec2 p=mod(fragPx+vec2(uTime*30.,-uTime*21.),1024.),q=rot30()*p;float n=.4*hash21(q)+.25*hash21(q*2.+17.)+.2*hash21(q*4.+47.)+.1*hash21(q*8.+113.)+.05*hash21(q*16.+191.);return n;}vec3 rayDir(vec2 frag,vec2 res,vec2 offset,float dist){float focal=res.y*max(dist,1e-3);return normalize(vec3(2.*(frag-offset)-res,focal));}float edgeFade(vec2 frag,vec2 res,vec2 offset){vec2 toC=frag-.5*res-offset;float r=length(toC)/(.5*min(res.x,res.y)),x=clamp(r,0.,1.),q=x*x*x*(x*(x*6.-15.)+10.),s=q*.5;s=pow(s,1.5);float tail=1.-pow(1.-s,2.);s=mix(s,tail,.2);return clamp(s+(layeredNoise(frag*.15)-.5)*.0015*s,0.,1.);}mat3 rotX(float a){float c=cos(a),s=sin(a);return mat3(1.,0.,0.,0.,c,-s,0.,s,c);}mat3 rotY(float a){float c=cos(a),s=sin(a);return mat3(c,0.,s,0.,1.,0.,-s,0.,c);}mat3 rotZ(float a){float c=cos(a),s=sin(a);return mat3(c,-s,0.,s,c,0.,0.,0.,1.);}vec2 rot2(vec2 v,float a){float s=sin(a),c=cos(a);return mat2(c,-s,s,c)*v;}float bendAngle(vec3 q,float t){return .8*sin(q.x*.55+t*.6)+.7*sin(q.y*.5-t*.5)+.6*sin(q.z*.6+t*.7);}void main(){vec2 frag=gl_FragCoord.xy;float t=uTime*uSpeed,jitterAmp=.08;vec3 dir=rayDir(frag,uResolution,vec2(0.),1.),col=vec3(0.);float marchT=0.,n=layeredNoise(frag);vec4 c=cos(t*.2+vec4(0.,33.,11.,0.));mat2 M2=mat2(c.x,c.y,c.z,c.w);mat3 rot3dMat=mat3(1.);if(uAnimType==1){vec3 ang=vec3(t*.31,t*.21,t*.17);rot3dMat=rotZ(ang.z)*rotY(ang.y)*rotX(ang.x);}for(int i=0;i<44;++i){vec3 P=marchT*dir;P.z-=2.;float rad=length(P);vec3 Pl=P*(10./max(rad,1e-6));if(uAnimType==0)Pl.xz*=M2;else if(uAnimType==1)Pl=rot3dMat*Pl;float stepLen=min(rad-.3,n*jitterAmp)+.1,grow=smoothstep(.35,3.,marchT);vec3 Pb=Pl;float rayPattern=smoothstep(.5,.7,sin(Pb.x+cos(Pb.y)*cos(Pb.z))*sin(Pb.z+sin(Pb.y)*cos(Pb.x+t)));vec3 spectral=1.+vec3(cos(marchT*3.),cos(marchT*3.+1.),cos(marchT*3.+2.));col+=(.05/(.4+stepLen))*smoothstep(5.,0.,rad)*spectral*rayPattern;marchT+=stepLen;}col*=edgeFade(frag,uResolution,vec2(0.))*uIntensity;fragColor=vec4(clamp(col,0.,1.),1.);}`;
 
-        const fragmentShader = `#version 300 es
-            precision highp float;
-            precision highp int;
+class PrismaticBurst{constructor(t){this.container=t,this.paused=!1,this.mouseTarget=[.5,.5],this.mouseSmooth=[.5,.5],this.accumTime=0,this.lastTime=performance.now(),this.init()}init(){const t=document.createElement("canvas");this.container.appendChild(t);const e=t.getContext("webgl2",{alpha:!1,antialias:!1});if(!e)return;this.gl=e,this.canvas=t,this.setupShaders(),this.setupGeometry(),this.setupTexture(),this.setupUniforms(),this.resize(),window.addEventListener("resize",()=>this.resize()),this.animate()}setupShaders(){const t=this.gl,e=t.createShader(t.VERTEX_SHADER);t.shaderSource(e,vs),t.compileShader(e);const i=t.createShader(t.FRAGMENT_SHADER);t.shaderSource(i,fs),t.compileShader(i),this.program=t.createProgram(),t.attachShader(this.program,e),t.attachShader(this.program,i),t.linkProgram(this.program),t.useProgram(this.program)}setupGeometry(){const t=this.gl,e=new Float32Array([-1,-1,0,0,3,-1,2,0,-1,3,0,2]),i=t.createBuffer();t.bindBuffer(t.ARRAY_BUFFER,i),t.bufferData(t.ARRAY_BUFFER,e,t.STATIC_DRAW);const s=t.getAttribLocation(this.program,"position"),a=t.getAttribLocation(this.program,"uv");t.enableVertexAttribArray(s),t.vertexAttribPointer(s,2,t.FLOAT,!1,16,0),t.enableVertexAttribArray(a),t.vertexAttribPointer(a,2,t.FLOAT,!1,16,8)}setupTexture(){const t=this.gl;this.gradientTexture=t.createTexture(),t.bindTexture(t.TEXTURE_2D,this.gradientTexture);const e=new Uint8Array([255,255,255,255]);t.texImage2D(t.TEXTURE_2D,0,t.RGBA,1,1,0,t.RGBA,t.UNSIGNED_BYTE,e),t.texParameteri(t.TEXTURE_2D,t.TEXTURE_MIN_FILTER,t.LINEAR),t.texParameteri(t.TEXTURE_2D,t.TEXTURE_MAG_FILTER,t.LINEAR),t.texParameteri(t.TEXTURE_2D,t.TEXTURE_WRAP_S,t.CLAMP_TO_EDGE),t.texParameteri(t.TEXTURE_2D,t.TEXTURE_WRAP_T,t.CLAMP_TO_EDGE)}setupUniforms(){const t=this.gl;this.uniforms={uResolution:t.getUniformLocation(this.program,"uResolution"),uTime:t.getUniformLocation(this.program,"uTime"),uIntensity:t.getUniformLocation(this.program,"uIntensity"),uSpeed:t.getUniformLocation(this.program,"uSpeed"),uAnimType:t.getUniformLocation(this.program,"uAnimType")},t.uniform1f(this.uniforms.uIntensity,1.5),t.uniform1f(this.uniforms.uSpeed,.3),t.uniform1i(this.uniforms.uAnimType,1)}resize(){const t=Math.min(window.devicePixelRatio||1,2),e=this.container.clientWidth,i=this.container.clientHeight;this.canvas.width=e*t,this.canvas.height=i*t,this.canvas.style.width=e+"px",this.canvas.style.height=i+"px",this.gl.viewport(0,0,this.canvas.width,this.canvas.height),this.gl.uniform2f(this.uniforms.uResolution,this.canvas.width,this.canvas.height)}animate(){const t=performance.now(),e=Math.max(0,t-this.lastTime)*.001;this.lastTime=t,this.paused||(this.accumTime+=e),this.gl.uniform1f(this.uniforms.uTime,this.accumTime),this.gl.drawArrays(this.gl.TRIANGLES,0,3),requestAnimationFrame(()=>this.animate())}}
 
-            out vec4 fragColor;
+const prismaticContainer=document.getElementById("prismatic-canvas-container");if(prismaticContainer){const burst=new PrismaticBurst(prismaticContainer);}
 
-            uniform vec2  uResolution;
-            uniform float uTime;
-            uniform float uIntensity;
-            uniform float uSpeed;
-            uniform int   uAnimType;
-            uniform vec2  uMouse;
-            uniform int   uColorCount;
-            uniform float uDistort;
-            uniform vec2  uOffset;
-            uniform sampler2D uGradient;
-            uniform float uNoiseAmount;
-            uniform int   uRayCount;
+document.addEventListener("DOMContentLoaded", function() {
+  const header = document.getElementById("main-header");
+  window.addEventListener("scroll", function() {
+    header.classList.toggle("header-scrolled", window.scrollY > 50);
+  });
 
-            float hash21(vec2 p){
-                p = floor(p);
-                float f = 52.9829189 * fract(dot(p, vec2(0.065, 0.005)));
-                return fract(f);
-            }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
 
-            mat2 rot30(){ return mat2(0.8, -0.5, 0.5, 0.8); }
+  document.querySelectorAll("#services .scroll-reveal, footer .scroll-reveal").forEach((el) => observer.observe(el));
 
-            float layeredNoise(vec2 fragPx){
-                vec2 p = mod(fragPx + vec2(uTime * 30.0, -uTime * 21.0), 1024.0);
-                vec2 q = rot30() * p;
-                float n = 0.0;
-                n += 0.40 * hash21(q);
-                n += 0.25 * hash21(q * 2.0 + 17.0);
-                n += 0.20 * hash21(q * 4.0 + 47.0);
-                n += 0.10 * hash21(q * 8.0 + 113.0);
-                n += 0.05 * hash21(q * 16.0 + 191.0);
-                return n;
-            }
+  document.querySelectorAll('a[href^="#"]').forEach((link) => {
+    link.addEventListener("click", function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute("href"));
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth" });
+      }
+    });
+  });
 
-            vec3 rayDir(vec2 frag, vec2 res, vec2 offset, float dist){
-                float focal = res.y * max(dist, 1e-3);
-                return normalize(vec3(2.0 * (frag - offset) - res, focal));
-            }
+  const modal = document.getElementById("external-link-modal");
+  const modalContent = document.getElementById("modal-content");
+  const confirmBtn = document.getElementById("modal-confirm");
+  const cancelBtn = document.getElementById("modal-cancel");
 
-            float edgeFade(vec2 frag, vec2 res, vec2 offset){
-                vec2 toC = frag - 0.5 * res - offset;
-                float r = length(toC) / (0.5 * min(res.x, res.y));
-                float x = clamp(r, 0.0, 1.0);
-                float q = x * x * x * (x * (x * 6.0 - 15.0) + 10.0);
-                float s = q * 0.5;
-                s = pow(s, 1.5);
-                float tail = 1.0 - pow(1.0 - s, 2.0);
-                s = mix(s, tail, 0.2);
-                float dn = (layeredNoise(frag * 0.15) - 0.5) * 0.0015 * s;
-                return clamp(s + dn, 0.0, 1.0);
-            }
+  function closeModal() {
+    modal.classList.remove("visible");
+    modalContent.classList.remove("visible");
+    setTimeout(() => {
+      modal.classList.add("hidden");
+    }, 300);
+  }
 
-            mat3 rotX(float a){ float c = cos(a), s = sin(a); return mat3(1.0,0.0,0.0, 0.0,c,-s, 0.0,s,c); }
-            mat3 rotY(float a){ float c = cos(a), s = sin(a); return mat3(c,0.0,s, 0.0,1.0,0.0, -s,0.0,c); }
-            mat3 rotZ(float a){ float c = cos(a), s = sin(a); return mat3(c,-s,0.0, s,c,0.0, 0.0,0.0,1.0); }
+  document.querySelectorAll(".external-link").forEach((link) => {
+    link.addEventListener("click", function(e) {
+      e.preventDefault();
+      confirmBtn.href = this.href;
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      setTimeout(() => {
+        modal.classList.add("visible");
+        modalContent.classList.add("visible");
+      }, 10);
+    });
+  });
 
-            vec3 sampleGradient(float t){
-                t = clamp(t, 0.0, 1.0);
-                return texture(uGradient, vec2(t, 0.5)).rgb;
-            }
+  cancelBtn.addEventListener("click", closeModal);
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeModal();
+  });
+  confirmBtn.addEventListener("click", closeModal);
 
-            vec2 rot2(vec2 v, float a){
-                float s = sin(a), c = cos(a);
-                return mat2(c, -s, s, c) * v;
-            }
+  const sliderContainer = document.getElementById("hero-slider-container");
+  if (sliderContainer) {
+    let interval = null;
+    let slides = [];
+    let currentIndex = 0;
+    const googleSheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRaZqc0MDueHuaig5Myw8_VGEzcyqA1f4V1iES2VutXXpfVeGpdFdzT-guu5oNSmkUVhBtsWD4uQx8J/pub?gid=0&single=true&output=csv";
+    const fallbackImages = [
+      "https://imgur.com/FI5PGR9.jpeg",
+      "https://imgur.com/7k5WbTf.jpeg",
+      "https://imgur.com/NCDJ6ZU.jpeg"
+    ];
 
-            float bendAngle(vec3 q, float t){
-                float a = 0.8 * sin(q.x * 0.55 + t * 0.6)
-                        + 0.7 * sin(q.y * 0.50 - t * 0.5)
-                        + 0.6 * sin(q.z * 0.60 + t * 0.7);
-                return a;
-            }
+    function nextSlide(index) {
+      if (slides.length <= 1) return;
+      slides.forEach((slide) => slide.classList.remove("active"));
+      currentIndex = (index + slides.length) % slides.length;
+      slides[currentIndex].classList.add("active");
+    }
 
-            void main(){
-                vec2 frag = gl_FragCoord.xy;
-                float t = uTime * uSpeed;
-                float jitterAmp = 0.1 * clamp(uNoiseAmount, 0.0, 1.0);
-                vec3 dir = rayDir(frag, uResolution, uOffset, 1.0);
-                float marchT = 0.0;
-                vec3 col = vec3(0.0);
-                float n = layeredNoise(frag);
-                vec4 c = cos(t * 0.2 + vec4(0.0, 33.0, 11.0, 0.0));
-                mat2 M2 = mat2(c.x, c.y, c.z, c.w);
-                float amp = clamp(uDistort, 0.0, 50.0) * 0.15;
+    function setupSlider(images, isFallback = false) {
+      if (!images || images.length === 0) {
+        const loader = document.getElementById("prismatic-loader");
+        if (loader && isFallback) loader.classList.add("fade-out");
+        return;
+      }
 
-                mat3 rot3dMat = mat3(1.0);
-                if(uAnimType == 1){
-                    vec3 ang = vec3(t * 0.31, t * 0.21, t * 0.17);
-                    rot3dMat = rotZ(ang.z) * rotY(ang.y) * rotX(ang.x);
-                }
-                mat3 hoverMat = mat3(1.0);
-                if(uAnimType == 2){
-                    vec2 m = uMouse * 2.0 - 1.0;
-                    vec3 ang = vec3(m.y * 0.6, m.x * 0.6, 0.0);
-                    hoverMat = rotY(ang.y) * rotX(ang.x);
-                }
+      for (let i = images.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [images[i], images[j]] = [images[j], images[i]];
+      }
 
-                for (int i = 0; i < 44; ++i) {
-                    vec3 P = marchT * dir;
-                    P.z -= 2.0;
-                    float rad = length(P);
-                    vec3 Pl = P * (10.0 / max(rad, 1e-6));
+      sliderContainer.innerHTML = "";
+      images.forEach((img) => {
+        const slide = document.createElement("div");
+        slide.className = "slide";
+        slide.style.backgroundImage = `url('${img}')`;
+        sliderContainer.appendChild(slide);
+      });
 
-                    if(uAnimType == 0){
-                        Pl.xz *= M2;
-                    } else if(uAnimType == 1){
-                        Pl = rot3dMat * Pl;
-                    } else {
-                        Pl = hoverMat * Pl;
-                    }
-
-                    float stepLen = min(rad - 0.3, n * jitterAmp) + 0.1;
-
-                    float grow = smoothstep(0.35, 3.0, marchT);
-                    float a1 = amp * grow * bendAngle(Pl * 0.6, t);
-                    float a2 = 0.5 * amp * grow * bendAngle(Pl.zyx * 0.5 + 3.1, t * 0.9);
-                    vec3 Pb = Pl;
-                    Pb.xz = rot2(Pb.xz, a1);
-                    Pb.xy = rot2(Pb.xy, a2);
-
-                    float rayPattern = smoothstep(
-                        0.5, 0.7,
-                        sin(Pb.x + cos(Pb.y) * cos(Pb.z)) *
-                        sin(Pb.z + sin(Pb.y) * cos(Pb.x + t))
-                    );
-
-                    if (uRayCount > 0) {
-                        float ang = atan(Pb.y, Pb.x);
-                        float comb = 0.5 + 0.5 * cos(float(uRayCount) * ang);
-                        comb = pow(comb, 3.0);
-                        rayPattern *= smoothstep(0.15, 0.95, comb);
-                    }
-
-                    vec3 spectralDefault = 1.0 + vec3(
-                        cos(marchT * 3.0 + 0.0),
-                        cos(marchT * 3.0 + 1.0),
-                        cos(marchT * 3.0 + 2.0)
-                    );
-
-                    float saw = fract(marchT * 0.25);
-                    float tRay = saw * saw * (3.0 - 2.0 * saw);
-                    vec3 userGradient = 2.0 * sampleGradient(tRay);
-                    vec3 spectral = (uColorCount > 0) ? userGradient : spectralDefault;
-                    vec3 base = (0.05 / (0.4 + stepLen))
-                              * smoothstep(5.0, 0.0, rad)
-                              * spectral;
-
-                    col += base * rayPattern;
-                    marchT += stepLen;
-                }
-
-                col *= edgeFade(frag, uResolution, uOffset);
-                col *= uIntensity;
-
-                fragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
-            }
-        `;
-
-        class PrismaticBurst {
-            constructor(container) {
-                this.container = container;
-                this.paused = false;
-                this.mouseTarget = [0.5, 0.5];
-                this.mouseSmooth = [0.5, 0.5];
-                this.accumTime = 0;
-                this.lastTime = performance.now();
-                
-                this.init();
-            }
-
-            init() {
-                const canvas = document.createElement('canvas');
-                canvas.style.mixBlendMode = 'lighten';
-                this.container.appendChild(canvas);
-                
-                const gl = canvas.getContext('webgl2', {
-                    alpha: false,
-                    antialias: false
-                });
-                
-                if (!gl) {
-                    alert('WebGL2가 지원되지 않습니다.');
-                    return;
-                }
-                
-                this.gl = gl;
-                this.canvas = canvas;
-                
-                this.setupShaders();
-                this.setupGeometry();
-                this.setupTexture();
-                this.setupUniforms();
-                this.resize();
-                
-                window.addEventListener('resize', () => this.resize());
-                this.container.addEventListener('pointermove', (e) => this.onPointerMove(e));
-                
-                this.animate();
-            }
-
-            setupShaders() {
-                const gl = this.gl;
-                
-                const vs = gl.createShader(gl.VERTEX_SHADER);
-                gl.shaderSource(vs, vertexShader);
-                gl.compileShader(vs);
-                
-                const fs = gl.createShader(gl.FRAGMENT_SHADER);
-                gl.shaderSource(fs, fragmentShader);
-                gl.compileShader(fs);
-                
-                this.program = gl.createProgram();
-                gl.attachShader(this.program, vs);
-                gl.attachShader(this.program, fs);
-                gl.linkProgram(this.program);
-                
-                if (!gl.getProgramParameter(this.program, gl.LINK_STATUS)) {
-                    console.error('Shader linking failed:', gl.getProgramInfoLog(this.program));
-                }
-                
-                gl.useProgram(this.program);
-            }
-
-            setupGeometry() {
-                const gl = this.gl;
-                
-                const vertices = new Float32Array([
-                    -1, -1,  0, 0,
-                     3, -1,  2, 0,
-                    -1,  3,  0, 2
-                ]);
-                
-                const vbo = gl.createBuffer();
-                gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-                gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-                
-                const posLoc = gl.getAttribLocation(this.program, 'position');
-                const uvLoc = gl.getAttribLocation(this.program, 'uv');
-                
-                gl.enableVertexAttribArray(posLoc);
-                gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 16, 0);
-                
-                gl.enableVertexAttribArray(uvLoc);
-                gl.vertexAttribPointer(uvLoc, 2, gl.FLOAT, false, 16, 8);
-            }
-
-            setupTexture() {
-                const gl = this.gl;
-                
-                this.gradientTexture = gl.createTexture();
-                gl.bindTexture(gl.TEXTURE_2D, this.gradientTexture);
-                
-                const white = new Uint8Array([255, 255, 255, 255]);
-                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, white);
-                
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-            }
-
-            setupUniforms() {
-                const gl = this.gl;
-                
-                this.uniforms = {
-                    uResolution: gl.getUniformLocation(this.program, 'uResolution'),
-                    uTime: gl.getUniformLocation(this.program, 'uTime'),
-                    uIntensity: gl.getUniformLocation(this.program, 'uIntensity'),
-                    uSpeed: gl.getUniformLocation(this.program, 'uSpeed'),
-                    uAnimType: gl.getUniformLocation(this.program, 'uAnimType'),
-                    uMouse: gl.getUniformLocation(this.program, 'uMouse'),
-                    uColorCount: gl.getUniformLocation(this.program, 'uColorCount'),
-                    uDistort: gl.getUniformLocation(this.program, 'uDistort'),
-                    uOffset: gl.getUniformLocation(this.program, 'uOffset'),
-                    uGradient: gl.getUniformLocation(this.program, 'uGradient'),
-                    uNoiseAmount: gl.getUniformLocation(this.program, 'uNoiseAmount'),
-                    uRayCount: gl.getUniformLocation(this.program, 'uRayCount')
-                };
-                
-                gl.uniform1i(this.uniforms.uGradient, 0);
-                gl.uniform1f(this.uniforms.uIntensity, 2.0);
-                gl.uniform1f(this.uniforms.uSpeed, 0.5);
-                gl.uniform1i(this.uniforms.uAnimType, 1);
-                gl.uniform2f(this.uniforms.uMouse, 0.5, 0.5);
-                gl.uniform1i(this.uniforms.uColorCount, 0);
-                gl.uniform1f(this.uniforms.uDistort, 0);
-                gl.uniform2f(this.uniforms.uOffset, 0, 0);
-                gl.uniform1f(this.uniforms.uNoiseAmount, 0.8);
-                gl.uniform1i(this.uniforms.uRayCount, 0);
-            }
-
-            resize() {
-                const dpr = Math.min(window.devicePixelRatio || 1, 2);
-                const w = this.container.clientWidth;
-                const h = this.container.clientHeight;
-                
-                this.canvas.width = w * dpr;
-                this.canvas.height = h * dpr;
-                this.canvas.style.width = w + 'px';
-                this.canvas.style.height = h + 'px';
-                
-                this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
-                this.gl.uniform2f(this.uniforms.uResolution, this.canvas.width, this.canvas.height);
-            }
-
-            onPointerMove(e) {
-                const rect = this.container.getBoundingClientRect();
-                const x = (e.clientX - rect.left) / rect.width;
-                const y = (e.clientY - rect.top) / rect.height;
-                this.mouseTarget = [Math.max(0, Math.min(1, x)), Math.max(0, Math.min(1, y))];
-            }
-
-            animate() {
-                const now = performance.now();
-                const dt = Math.max(0, now - this.lastTime) * 0.001;
-                this.lastTime = now;
-                
-                if (!this.paused) {
-                    this.accumTime += dt;
-                }
-                
-                const tau = 0.02;
-                const alpha = 1 - Math.exp(-dt / tau);
-                this.mouseSmooth[0] += (this.mouseTarget[0] - this.mouseSmooth[0]) * alpha;
-                this.mouseSmooth[1] += (this.mouseTarget[1] - this.mouseSmooth[1]) * alpha;
-                
-                this.gl.uniform2f(this.uniforms.uMouse, this.mouseSmooth[0], this.mouseSmooth[1]);
-                this.gl.uniform1f(this.uniforms.uTime, this.accumTime);
-                
-                this.gl.drawArrays(this.gl.TRIANGLES, 0, 3);
-                
-                requestAnimationFrame(() => this.animate());
-            }
-
-            setIntensity(val) {
-                this.gl.uniform1f(this.uniforms.uIntensity, val);
-            }
-
-            setSpeed(val) {
-                this.gl.uniform1f(this.uniforms.uSpeed, val);
-            }
-
-            setAnimType(val) {
-                this.gl.uniform1i(this.uniforms.uAnimType, parseInt(val));
-            }
-
-            setDistort(val) {
-                this.gl.uniform1f(this.uniforms.uDistort, val);
-            }
-
-            setRayCount(val) {
-                this.gl.uniform1i(this.uniforms.uRayCount, parseInt(val));
-            }
-
-            setPaused(val) {
-                this.paused = val;
-            }
+      slides = sliderContainer.querySelectorAll(".slide");
+      if (slides.length > 0) {
+        slides[0].classList.add("active");
+        if (isFallback) {
+          setTimeout(() => {
+            const loader = document.getElementById("prismatic-loader");
+            if (loader) loader.classList.add("fade-out");
+          }, 1500);
         }
+        if (interval) clearInterval(interval);
+        if (slides.length > 1) {
+          interval = setInterval(() => nextSlide(currentIndex + 1), 5000);
+        }
+      }
+    }
 
-        // Initialize
-        const container = document.getElementById('container');
-        const burst = new PrismaticBurst(container);
+    setupSlider(fallbackImages, true);
 
-        // Controls
-        const intensitySlider = document.getElementById('intensity');
-        const speedSlider = document.getElementById('speed');
-        const animTypeSelect = document.getElementById('animType');
-        const distortSlider = document.getElementById('distort');
-        const rayCountSlider = document.getElementById('rayCount');
-        const pauseBtn = document.getElementById('pauseBtn');
+    fetch(googleSheetUrl)
+      .then((response) => response.ok ? response.text() : Promise.reject("Network response was not ok"))
+      .then((data) => {
+        const urls = data.split(/\r?\n/).map((line) => line.trim()).filter((line) => line.startsWith("http"));
+        if (urls.length > 0) {
+          setupSlider(urls, false);
+        }
+      })
+      .catch((error) => {
+        console.error("Failed to fetch from Google Sheet, using fallback images.", error);
+      });
+  }
 
-        intensitySlider.addEventListener('input', (e) => {
-            const val = parseFloat(e.target.value);
-            document.getElementById('intensityVal').textContent = val.toFixed(1);
-            burst.setIntensity(val);
+  const tabsContainer = document.getElementById("service-tabs");
+  const tabs = document.querySelectorAll(".service-tab");
+  const tabContents = document.querySelectorAll(".service-tab-content");
+  const tabGlider = document.getElementById("tab-glider");
+
+  if (tabsContainer && tabs.length > 0 && tabGlider) {
+    const updateGliderPosition = () => {
+      const activeTab = tabsContainer.querySelector(".service-tab.active");
+      if (activeTab) {
+        tabGlider.style.width = `${activeTab.offsetWidth}px`;
+        tabGlider.style.height = `${activeTab.offsetHeight}px`;
+        tabGlider.style.left = `${activeTab.offsetLeft}px`;
+        tabGlider.style.top = `${activeTab.offsetTop}px`;
+      }
+    };
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", (e) => {
+        tabs.forEach((t) => t.classList.remove("active"));
+        e.currentTarget.classList.add("active");
+        
+        setTimeout(() => {
+          updateGliderPosition();
+        }, 0);
+
+        const tabId = e.currentTarget.dataset.tab + "-content";
+        tabContents.forEach((content) => {
+          if (content.id !== tabId) {
+            content.classList.add("opacity-0");
+            setTimeout(() => content.classList.add("hidden"), 400);
+          }
         });
 
-        speedSlider.addEventListener('input', (e) => {
-            const val = parseFloat(e.target.value);
-            document.getElementById('speedVal').textContent = val.toFixed(1);
-            burst.setSpeed(val);
-        });
+        const activeContent = document.getElementById(tabId);
+        if (activeContent) {
+          activeContent.classList.remove("hidden");
+          setTimeout(() => activeContent.classList.remove("opacity-0"), 50);
+        }
+      });
+    });
 
-        animTypeSelect.addEventListener('change', (e) => {
-            burst.setAnimType(e.target.value);
-        });
-
-        distortSlider.addEventListener('input', (e) => {
-            const val = parseFloat(e.target.value);
-            document.getElementById('distortVal').textContent = val.toFixed(1);
-            burst.setDistort(val);
-        });
-
-        rayCountSlider.addEventListener('input', (e) => {
-            const val = parseInt(e.target.value);
-            document.getElementById('rayCountVal').textContent = val;
-            burst.setRayCount(val);
-        });
-
-        let paused = false;
-        pauseBtn.addEventListener('click', () => {
-            paused = !paused;
-            burst.setPaused(paused);
-            pauseBtn.textContent = paused ? 'Resume' : 'Pause';
-        });
+    setTimeout(() => updateGliderPosition(), 100);
+    window.addEventListener("load", () => setTimeout(() => updateGliderPosition(), 50));
+    window.addEventListener("resize", updateGliderPosition);
+  }
+});
     </script>
 </body>
 </html>
