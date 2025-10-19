@@ -1,533 +1,475 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Koung's Day - 폭스바겐 공식딜러 남궁환</title>
-    
-    <!-- OG & Twitter Meta Tags -->
-    <link rel="icon" href="https://i.imgur.com/TSuTyp4.png" type="image/png">
-    <meta property="og:title" content="Koung's Day - 폭스바겐 공식딜러 남궁환">
-    <meta property="og:description" content="Volkswagen 공식 딜러 남궁환의 개인 웹사이트입니다. 견적, 계약 관리, 폭스바겐 소식을 만나보세요.">
-    <meta property="og:image" content="https://i.imgur.com/qQ9D7Au.jpg">
-    <meta property="og:url" content="https://www.koungs.day">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content="https://i.imgur.com/qQ9D7Au.jpg">
-    
-    <!-- Libraries -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/ogl"></script> <!-- WebGL Library for Prismatic Burst -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+import { useEffect, useRef } from 'react';
+import { Renderer, Program, Mesh, Triangle, Texture } from 'ogl';
+import './PrismaticBurst.css';
 
-    <style>
-        html { scroll-behavior: smooth; }
-        section[id], footer[id] {
-            scroll-margin-top: 80px;
-        }
-        :root {
-            --vw-blue: #004d8f;
-            --dark-grey: #1a202c; 
-            --white: #ffffff;
-            --text-color: #4a5568;
-            --dark-bg: #111827; /* bg-gray-900 */
-        }
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-            background-color: var(--white);
-            color: var(--text-color);
-            -webkit-font-smoothing: antialiased;
-        }
-        .font-brand { font-family: 'Poppins', sans-serif; }
-        .scroll-reveal {
-            opacity: 0;
-            transform: translateY(40px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-        }
-        .scroll-reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .header-scrolled {
-            background-color: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-        }
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.2), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-        }
-        #hero-slider-container .slide {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            opacity: 0;
-            transition: opacity 1.5s ease-in-out;
-            z-index: 1;
-        }
-        #hero-slider-container .slide.active { opacity: 1; z-index: 2; }
-        #external-link-modal.visible #modal-content {
-            transform: scale(1);
-            opacity: 1;
-        }
-        .header-text-border {
-            text-shadow: 
-                -1px -1px 0 #fff, 1px -1px 0 #fff,
-                -1px  1px 0 #fff, 1px  1px 0 #fff;
-        }
-        .hero-text-shadow {
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
-        }
-        
-        #hero-loader {
-            background-color: #0c0c0c;
-            opacity: 1;
-            transition: opacity 1.2s ease-in-out;
-        }
-        #hero-loader.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-        
-        .hero-cta-button {
-            background-color: rgba(17, 24, 39, 0.77);
-            color: white;
-            border: 2px solid white;
-            border-radius: 9999px;
-            padding: 0.75rem 2rem;
-        }
-    
-        /* --- 🎨 탭 UI 스타일 --- */
-        .service-tab {
-            transition: color 0.4s ease-in-out;
-            color: var(--text-color);
-            font-weight: 500;
-            outline: none;
-        }
-        .service-tab:focus-visible {
-             box-shadow: 0 0 0 2px var(--vw-blue);
-        }
-        .service-tab.active {
-            color: var(--white) !important;
-        }
-        .service-tab-content {
-            transition: opacity 0.4s ease-in-out;
-        }
-        #tab-glider {
-            background-color: var(--dark-grey);
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.2), 0 2px 4px -2px rgb(0 0 0 / 0.2);
-            transition: top 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55), 
-                        left 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55), 
-                        width 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55), 
-                        height 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-        }
+const vertexShader = `#version 300 es
+in vec2 position;
+in vec2 uv;
+out vec2 vUv;
+void main() {
+    vUv = uv;
+    gl_Position = vec4(position, 0.0, 1.0);
+}
+`;
 
-        .shiny-button-text {
-            position: relative;
-            color: white; 
-        }
+const fragmentShader = `#version 300 es
+precision highp float;
+precision highp int;
 
-        .shiny-button-text::before {
-            content: attr(data-text);
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                120deg,
-                transparent 40%,
-                white 50%, 
-                transparent 60%
-            );
-            background-size: 200% 100%;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            animation: shine 3s linear infinite;
+out vec4 fragColor;
+
+uniform vec2  uResolution;
+uniform float uTime;
+
+uniform float uIntensity;
+uniform float uSpeed;
+uniform int   uAnimType;
+uniform vec2  uMouse;
+uniform int   uColorCount;
+uniform float uDistort;
+uniform vec2  uOffset;
+uniform sampler2D uGradient;
+uniform float uNoiseAmount;
+uniform int   uRayCount;
+
+float hash21(vec2 p){
+    p = floor(p);
+    float f = 52.9829189 * fract(dot(p, vec2(0.065, 0.005)));
+    return fract(f);
+}
+
+mat2 rot30(){ return mat2(0.8, -0.5, 0.5, 0.8); }
+
+float layeredNoise(vec2 fragPx){
+    vec2 p = mod(fragPx + vec2(uTime * 30.0, -uTime * 21.0), 1024.0);
+    vec2 q = rot30() * p;
+    float n = 0.0;
+    n += 0.40 * hash21(q);
+    n += 0.25 * hash21(q * 2.0 + 17.0);
+    n += 0.20 * hash21(q * 4.0 + 47.0);
+    n += 0.10 * hash21(q * 8.0 + 113.0);
+    n += 0.05 * hash21(q * 16.0 + 191.0);
+    return n;
+}
+
+vec3 rayDir(vec2 frag, vec2 res, vec2 offset, float dist){
+    float focal = res.y * max(dist, 1e-3);
+    return normalize(vec3(2.0 * (frag - offset) - res, focal));
+}
+
+float edgeFade(vec2 frag, vec2 res, vec2 offset){
+    vec2 toC = frag - 0.5 * res - offset;
+    float r = length(toC) / (0.5 * min(res.x, res.y));
+    float x = clamp(r, 0.0, 1.0);
+    float q = x * x * x * (x * (x * 6.0 - 15.0) + 10.0);
+    float s = q * 0.5;
+    s = pow(s, 1.5);
+    float tail = 1.0 - pow(1.0 - s, 2.0);
+    s = mix(s, tail, 0.2);
+    float dn = (layeredNoise(frag * 0.15) - 0.5) * 0.0015 * s;
+    return clamp(s + dn, 0.0, 1.0);
+}
+
+mat3 rotX(float a){ float c = cos(a), s = sin(a); return mat3(1.0,0.0,0.0, 0.0,c,-s, 0.0,s,c); }
+mat3 rotY(float a){ float c = cos(a), s = sin(a); return mat3(c,0.0,s, 0.0,1.0,0.0, -s,0.0,c); }
+mat3 rotZ(float a){ float c = cos(a), s = sin(a); return mat3(c,-s,0.0, s,c,0.0, 0.0,0.0,1.0); }
+
+vec3 sampleGradient(float t){
+    t = clamp(t, 0.0, 1.0);
+    return texture(uGradient, vec2(t, 0.5)).rgb;
+}
+
+vec2 rot2(vec2 v, float a){
+    float s = sin(a), c = cos(a);
+    return mat2(c, -s, s, c) * v;
+}
+
+float bendAngle(vec3 q, float t){
+    float a = 0.8 * sin(q.x * 0.55 + t * 0.6)
+            + 0.7 * sin(q.y * 0.50 - t * 0.5)
+            + 0.6 * sin(q.z * 0.60 + t * 0.7);
+    return a;
+}
+
+void main(){
+    vec2 frag = gl_FragCoord.xy;
+    float t = uTime * uSpeed;
+    float jitterAmp = 0.1 * clamp(uNoiseAmount, 0.0, 1.0);
+    vec3 dir = rayDir(frag, uResolution, uOffset, 1.0);
+    float marchT = 0.0;
+    vec3 col = vec3(0.0);
+    float n = layeredNoise(frag);
+    vec4 c = cos(t * 0.2 + vec4(0.0, 33.0, 11.0, 0.0));
+    mat2 M2 = mat2(c.x, c.y, c.z, c.w);
+    float amp = clamp(uDistort, 0.0, 50.0) * 0.15;
+
+    mat3 rot3dMat = mat3(1.0);
+    if(uAnimType == 1){
+      vec3 ang = vec3(t * 0.31, t * 0.21, t * 0.17);
+      rot3dMat = rotZ(ang.z) * rotY(ang.y) * rotX(ang.x);
+    }
+    mat3 hoverMat = mat3(1.0);
+    if(uAnimType == 2){
+      vec2 m = uMouse * 2.0 - 1.0;
+      vec3 ang = vec3(m.y * 0.6, m.x * 0.6, 0.0);
+      hoverMat = rotY(ang.y) * rotX(ang.x);
+    }
+
+    for (int i = 0; i < 44; ++i) {
+        vec3 P = marchT * dir;
+        P.z -= 2.0;
+        float rad = length(P);
+        vec3 Pl = P * (10.0 / max(rad, 1e-6));
+
+        if(uAnimType == 0){
+            Pl.xz *= M2;
+        } else if(uAnimType == 1){
+      Pl = rot3dMat * Pl;
+        } else {
+      Pl = hoverMat * Pl;
         }
 
-        @keyframes shine {
-            0% { background-position: 150%; }
-            100% { background-position: -150%; }
-        }
-        
-        @media (max-width: 767px) {
-            html { font-size: 90%; }
-        }
-    </style>
-</head>
-<body class="bg-gray-100">
+        float stepLen = min(rad - 0.3, n * jitterAmp) + 0.1;
 
-    <header id="main-header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="font-brand text-2xl font-bold text-gray-800 header-text-border scroll-reveal" style="transition-delay: 600ms;">Koung's Day</div>
-            <nav class="hidden md:flex items-center space-x-8 scroll-reveal" style="transition-delay: 800ms;">
-                <a href="#services" class="text-gray-600 hover:text-blue-700 font-semibold header-text-border">주요 서비스</a>
-                <a href="#contact" class="bg-blue-800 text-white font-bold py-2 px-5 rounded-lg cta-button transition-all duration-300">
-                    <i class="fas fa-phone-alt mr-2"></i>상담 문의
-                </a>
-            </nav>
-            <div class="md:hidden scroll-reveal" style="transition-delay: 600ms;">
-                 <a href="#contact" class="bg-blue-800 text-white font-bold py-2 px-5 rounded-lg cta-button transition-all duration-300">
-                    <i class="fas fa-phone-alt"></i>
-                </a>
-            </div>
-        </div>
-    </header>
+        float grow = smoothstep(0.35, 3.0, marchT);
+        float a1 = amp * grow * bendAngle(Pl * 0.6, t);
+        float a2 = 0.5 * amp * grow * bendAngle(Pl.zyx * 0.5 + 3.1, t * 0.9);
+        vec3 Pb = Pl;
+        Pb.xz = rot2(Pb.xz, a1);
+        Pb.xy = rot2(Pb.xy, a2);
 
-    <main>
-        <section class="relative h-screen flex items-center justify-center text-white text-center">
-            <div id="hero-slider-container" class="absolute inset-0"></div>
-            <div class="absolute inset-0 bg-black/60"></div>
-            <div id="hero-loader" class="absolute inset-0 z-20">
-                <!-- PrismaticBurst 캔버스가 여기에 삽입됩니다. -->
-            </div>
+        float rayPattern = smoothstep(
+            0.5, 0.7,
+            sin(Pb.x + cos(Pb.y) * cos(Pb.z)) *
+            sin(Pb.z + sin(Pb.y) * cos(Pb.x + t))
+        );
 
-            <div class="relative z-10 p-8 rounded-2xl max-w-3xl mx-4">
-                <h1 class="text-4xl md:text-6xl font-black leading-tight mb-4 scroll-reveal hero-text-shadow">
-                    폭스바겐을 만나는<br>가장 완벽한 순간
-                </h1>
-                <p class="text-lg md:text-xl mb-8 max-w-2xl mx-auto scroll-reveal hero-text-shadow" style="transition-delay: 200ms;">
-                    신뢰할 수 있는 정보와 특별한 서비스를 지금 바로 만나보세요.
-                </p>
-                <a href="#services" class="hero-cta-button scroll-reveal" style="transition-delay: 400ms; display: inline-block;">
-                    <span class="shiny-button-text" data-text="주요 서비스 확인하기">주요 서비스 확인하기</span>
-                </a>
-            </div>
-        </section>
-
-        <section id="services" class="py-20 bg-white">
-            <div class="container mx-auto px-6">
-                <div class="text-center mb-12">
-                    <h2 class="text-4xl font-black text-gray-800 mb-4 scroll-reveal">고객 맞춤형 서비스</h2>
-                    <p class="text-lg text-gray-600 max-w-3xl mx-auto scroll-reveal">
-                        실시간 데이터와 전문 시스템을 활용하여 정확한 견적과 할부 계산,<br class="hidden sm:block"> 그리고 계약 진행 상황을 투명하게 확인하실 수 있습니다.
-                    </p>
-                </div>
-
-                <div id="service-tabs" class="relative flex flex-col sm:flex-row justify-center mb-12 bg-gray-100 rounded-xl p-1.5 max-w-xl mx-auto scroll-reveal">
-                    <div id="tab-glider" class="absolute rounded-lg"></div>
-                    <button data-tab="calculator" class="service-tab relative z-10 flex-1 py-2.5 px-4 text-center text-sm sm:text-base active">
-                        견적 계산기
-                    </button>
-                    <button data-tab="installment" class="service-tab relative z-10 flex-1 py-2.5 px-4 text-center text-sm sm:text-base">
-                        할부 계산기
-                    </button>
-                    <button data-tab="tracker" class="service-tab relative z-10 flex-1 py-2.5 px-4 text-center text-sm sm:text-base">
-                        계약 조회
-                    </button>
-                </div>
-
-                <div id="service-content" class="scroll-reveal max-w-4xl mx-auto">
-                    <!-- 견적 계산기 -->
-                    <div id="calculator-content" class="service-tab-content bg-white p-8 md:p-12 rounded-2xl shadow-xl">
-                        <div class="text-left">
-                            <img src="https://i.imgur.com/1EiNSrz.png" alt="견적기 예시 화면" class="rounded-xl shadow-lg w-full max-w-2xl mx-auto mb-8">
-                            <div class="max-w-2xl mx-auto">
-                                <h3 class="text-3xl font-black text-gray-800 mb-4">내 손안의 컨설턴트</h3>
-                                <p class="text-gray-600 mb-6 leading-relaxed">복잡한 자동차 구매, 공식 프로모션과 최신 정보를 반영한 실구매가 계산기로 투명하고 정확한 비용을 직접 확인할 수 있습니다.</p>
-                                <ul class="space-y-3 text-left mb-8">
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-blue-800 mt-1 mr-3"></i><span><strong>최신 프로모션 자동 반영:</strong> 영업사원과 동일한 시스템으로 정확한 견적을 제공합니다.</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-blue-800 mt-1 mr-3"></i><span><strong>실시간 부대비용 계산:</strong> 취등록세, 공채 등 어려운 비용을 한번에 계산합니다.</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-blue-800 mt-1 mr-3"></i><span><strong>전기차 보조금 완벽 적용:</strong> 거주 지역에 맞는 최신 보조금을 적용합니다.</span></li>
-                                </ul>
-                                <div class="mt-4">
-                                    <a href="https://www.koungs.day/%E3%85%A4%E3%85%A4%EA%B0%84%ED%8E%B8-%EA%B2%AC%EC%A0%81-%EA%B3%A0%EA%B0%9D%EC%9A%A9" class="external-link inline-block bg-blue-800 text-white font-bold py-3 px-8 rounded-lg text-lg cta-button transition-all duration-300">견적 계산기 바로가기</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 할부 계산기 -->
-                    <div id="installment-content" class="service-tab-content bg-white p-8 md:p-12 rounded-2xl shadow-xl hidden opacity-0">
-                         <div class="text-left">
-                            <img src="https://imgur.com/u3gDVEb.png" alt="할부 계산기 예시 화면" class="rounded-xl shadow-lg w-full max-w-2xl mx-auto mb-8">
-                                <div class="max-w-2xl mx-auto">
-                                 <h3 class="text-3xl font-black text-gray-800 mb-4">나만의 맞춤 금융 플랜</h3>
-                                 <p class="text-gray-600 mb-6 leading-relaxed">폭스바겐 파이낸셜 서비스와 연동하여, 고객님의 예산에 맞는 최적의 금융 프로그램을 찾고 월 납입금을 시뮬레이션 해볼 수 있습니다.</p>
-                                 <ul class="space-y-3 text-left mb-8">
-                                     <li class="flex items-start"><i class="fas fa-check-circle text-blue-800 mt-1 mr-3"></i><span><strong>다양한 금융 상품:</strong> 할부, 리스, 렌트 등 다양한 상품의 월 납입금을 비교할 수 있습니다.</span></li>
-                                     <li class="flex items-start"><i class="fas fa-check-circle text-blue-800 mt-1 mr-3"></i><span><strong>자유로운 조건 설정:</strong> 선수금, 할부 기간 등을 자유롭게 조절하여 나만의 플랜을 설계할 수 있습니다.</span></li>
-                                 </ul>
-                                 <div class="mt-4">
-                                     <a href="https://www.koungs.day/%E3%85%A4%E3%85%A4%ED%95%A0%EB%B6%80-%EA%B3%84%EC%82%B0-%EA%B3%A0%EA%B0%9D%EC%9A%A9" class="external-link inline-block bg-blue-800 text-white font-bold py-3 px-8 rounded-lg text-lg cta-button transition-all duration-300">할부 계산기 바로가기</a>
-                                 </div>
-                             </div>
-                        </div>
-                    </div>
-                    <!-- 계약 조회 -->
-                    <div id="tracker-content" class="service-tab-content bg-white p-8 md:p-12 rounded-2xl shadow-xl hidden opacity-0">
-                        <div class="text-left">
-                            <img src="https://i.imgur.com/MiWjT9J.png" alt="계약 현황 조회 예시 화면" class="rounded-xl shadow-lg w-full max-w-2xl mx-auto mb-8">
-                            <div class="max-w-2xl mx-auto">
-                                <h3 class="text-3xl font-black text-gray-800 mb-4">기다림의 모든 순간을 투명하게</h3>
-                                <p class="text-gray-600 mb-6 leading-relaxed">차량이 준비되는 모든 과정을 투명하게 공유합니다. 제공받은 비밀번호와 계약자명을 입력하여, 내 계약 순번과 진행 상황을 확인하세요.</p>
-                                <ul class="space-y-3 text-left mb-8">
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-blue-800 mt-1 mr-3"></i><span><strong>간편 인증 시스템:</strong> 가입 없이 계약 정보만으로 로그인하세요.</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-blue-800 mt-1 mr-3"></i><span><strong>실시간 대기 순번 확인:</strong> 내 순번을 확인하며 출고 시기를 예측합니다.</span></li>
-                                    <li class="flex items-start"><i class="fas fa-check-circle text-blue-800 mt-1 mr-3"></i><span><strong>진행 단계 알림:</strong> 계약, 배정, PDI, 출고 등 각 단계를 업데이트합니다.</span></li>
-                                </ul>
-                                <div class="mt-4">
-                                    <a href="https://www.koungs.day/%EB%82%B4-%EA%B3%84%EC%95%BD-%ED%98%84%ED%99%A9-%EC%88%9C%EB%B2%88" class="external-link inline-block bg-blue-800 text-white font-bold py-3 px-8 rounded-lg text-lg cta-button transition-all duration-300">내 계약 조회하기</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-    </main>
-    
-    <footer id="contact" class="bg-gray-900 text-white">
-        <div class="container mx-auto px-6 py-20">
-            <div class="lg:flex lg:items-center lg:justify-between text-center lg:text-left">
-                <div class="lg:w-1/2 scroll-reveal">
-                    <div class="max-w-lg mx-auto lg:mx-0">
-                        <h2 class="text-4xl font-black mb-4">나의 폭스바겐 파트너</h2>
-                        <p class="text-lg text-gray-300 mb-8">
-                            안녕하세요 폭스바겐 공식딜러 남궁환입니다.<br>삶과 스타일을 담는 소중한 공간이자 여정을 함께하세요.<br class="hidden sm:block"> 모든것이 준비되어 있습니다.
-                        </p>
-                        <a href="tel:010-4454-5212" class="inline-block bg-white text-blue-800 font-bold py-3 px-8 rounded-lg text-lg cta-button transition-all duration-300">
-                            <i class="fas fa-phone-alt mr-2"></i>전화 상담
-                        </a>
-                    </div>
-                </div>
-                <div class="mt-16 lg:mt-0 lg:w-1/2 flex justify-center lg:justify-end scroll-reveal" style="transition-delay: 200ms;">
-                    <img src="https://i.imgur.com/aT4VMm1.png" alt="명함 이미지" class="rounded-lg shadow-lg max-w-sm w-full">
-                </div>
-            </div>
-            <div class="text-gray-500 text-sm border-t border-gray-700 pt-8 mt-20 text-center">
-                <p>&copy; 2025 Koung's Day. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <div id="external-link-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4 transition-opacity duration-300">
-        <div id="modal-content" class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md text-center transform scale-95 opacity-0 transition-transform transition-opacity duration-300">
-            <h3 class="text-2xl font-bold text-gray-800 mb-4">페이지 이동</h3>
-            <p class="text-gray-600 mb-8">선택하신 페이지으로 이동하시겠습니까?</p>
-            <div class="flex justify-center space-x-4">
-                <button id="modal-cancel" class="bg-gray-200 text-gray-700 font-bold py-2 px-6 rounded-lg hover:bg-gray-300 transition-colors">취소</button>
-                <a id="modal-confirm" href="#" target="_blank" class="bg-blue-800 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-900 transition-colors cta-button">이동</a>
-            </div>
-        </div>
-    </div>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // --- 1. 필수 요소 가져오기 ---
-        const heroLoader = document.getElementById('hero-loader');
-        const header = document.getElementById('main-header');
-        const sliderContainer = document.getElementById('hero-slider-container');
-
-        // --- 2. 핵심 기능 정의 ---
-
-        // 콘텐츠를 화면에 표시하는 가장 중요한 함수
-        const revealContent = () => {
-            if (heroLoader) {
-                heroLoader.classList.add('hidden');
-            }
-            document.querySelectorAll('header .scroll-reveal, section:first-child .scroll-reveal').forEach(el => {
-                el.classList.add('visible');
-            });
-        };
-
-        // Prismatic Burst 애니메이션 로더를 실행하는 함수
-        function runAnimatedLoader() {
-            try {
-                // ogl 라이브러리가 로드되었는지 확인
-                if (heroLoader && typeof ogl !== 'undefined') {
-                    const { Renderer, Program, Mesh, Triangle, Texture } = ogl;
-                    // (Prismatic Burst 코드는 길어서 생략... 실제로는 여기에 모든 WebGL 코드가 포함됩니다)
-                    const vertexShader=`#version 300 es\nin vec2 position;in vec2 uv;out vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position,0.,1.);}`;
-                    const fragmentShader=`#version 300 es\nprecision highp float;precision highp int;out vec4 fragColor;uniform vec2 uResolution;uniform float uTime;uniform float uIntensity;uniform float uSpeed;uniform int uAnimType;uniform vec2 uMouse;uniform int uColorCount;uniform float uDistort;uniform vec2 uOffset;uniform sampler2D uGradient;uniform float uNoiseAmount;uniform int uRayCount;float hash21(vec2 p){p=floor(p);float f=52.9829189*fract(dot(p,vec2(.065,.005)));return fract(f);}mat2 rot30(){return mat2(.8,-.5,.5,.8);}float layeredNoise(vec2 fragPx){vec2 p=mod(fragPx+vec2(uTime*30.,-uTime*21.),1024.);vec2 q=rot30()*p;float n=0.;n+=.4*hash21(q);n+=.25*hash21(q*2.+17.);n+=.2*hash21(q*4.+47.);n+=.1*hash21(q*8.+113.);n+=.05*hash21(q*16.+191.);return n;}vec3 rayDir(vec2 frag,vec2 res,vec2 offset,float dist){float focal=res.y*max(dist,1e-3);return normalize(vec3(2.*(frag-offset)-res,focal));}float edgeFade(vec2 frag,vec2 res,vec2 offset){vec2 toC=frag-.5*res-offset;float r=length(toC)/(.5*min(res.x,res.y));float x=clamp(r,0.,1.);float q=x*x*x*(x*(x*6.-15.)+10.);float s=q*.5;s=pow(s,1.5);float tail=1.-pow(1.-s,2.);s=mix(s,tail,.2);float dn=(layeredNoise(frag*.15)-.5)*.0015*s;return clamp(s+dn,0.,1.);}mat3 rotX(float a){float c=cos(a),s=sin(a);return mat3(1.,0.,0.,0.,c,-s,0.,s,c);}mat3 rotY(float a){float c=cos(a),s=sin(a);return mat3(c,0.,s,0.,1.,0.,-s,0.,c);}mat3 rotZ(float a){float c=cos(a),s=sin(a);return mat3(c,-s,0.,s,c,0.,0.,0.,1.);}vec3 sampleGradient(float t){t=clamp(t,0.,1.);return texture(uGradient,vec2(t,.5)).rgb;}vec2 rot2(vec2 v,float a){float s=sin(a),c=cos(a);return mat2(c,-s,s,c)*v;}float bendAngle(vec3 q,float t){float a=.8*sin(q.x*.55+t*.6)+.7*sin(q.y*.5-t*.5)+.6*sin(q.z*.6+t*.7);return a;}void main(){vec2 frag=gl_FragCoord.xy;float t=uTime*uSpeed;float jitterAmp=.1*clamp(uNoiseAmount,0.,1.);vec3 dir=rayDir(frag,uResolution,uOffset,1.);float marchT=0.;vec3 col=vec3(0.);float n=layeredNoise(frag);vec4 c=cos(t*.2+vec4(0.,33.,11.,0.));mat2 M2=mat2(c.x,c.y,c.z,c.w);float amp=clamp(uDistort,0.,50.)*.15;mat3 rot3dMat=mat3(1.);if(uAnimType==1){vec3 ang=vec3(t*.31,t*.21,t*.17);rot3dMat=rotZ(ang.z)*rotY(ang.y)*rotX(ang.x);}mat3 hoverMat=mat3(1.);if(uAnimType==2){vec2 m=uMouse*2.-1.;vec3 ang=vec3(m.y*.6,m.x*.6,0.);hoverMat=rotY(ang.y)*rotX(ang.x);}for(int i=0;i<44;++i){vec3 P=marchT*dir;P.z-=2.;float rad=length(P);vec3 Pl=P*(10./max(rad,1e-6));if(uAnimType==0){Pl.xz*=M2;}else if(uAnimType==1){Pl=rot3dMat*Pl;}else{Pl=hoverMat*Pl;}float stepLen=min(rad-.3,n*jitterAmp)+.1;float grow=smoothstep(.35,3.,marchT);float a1=amp*grow*bendAngle(Pl*.6,t);float a2=.5*amp*grow*bendAngle(Pl.zyx*.5+3.1,t*.9);vec3 Pb=Pl;Pb.xz=rot2(Pb.xz,a1);Pb.xy=rot2(Pb.xy,a2);float rayPattern=smoothstep(.5,.7,sin(Pb.x+cos(Pb.y)*cos(Pb.z))*sin(Pb.z+sin(Pb.y)*cos(Pb.x+t)));if(uRayCount>0){float ang=atan(Pb.y,Pb.x);float comb=.5+.5*cos(float(uRayCount)*ang);comb=pow(comb,3.);rayPattern*=smoothstep(.15,.95,comb);}vec3 spectralDefault=1.+vec3(cos(marchT*3.+.0),cos(marchT*3.+1.),cos(marchT*3.+2.));float saw=fract(marchT*.25);float tRay=saw*saw*(3.-2.*saw);vec3 userGradient=2.*sampleGradient(tRay);vec3 spectral=uColorCount>0?userGradient:spectralDefault;vec3 base=(.05/(.4+stepLen))*smoothstep(5.,0.,rad)*spectral;col+=base*rayPattern;marchT+=stepLen;}col*=edgeFade(frag,uResolution,uOffset);col*=uIntensity;fragColor=vec4(clamp(col,0.,1.),1.);}`;
-                    const hexToRgb01=e=>{let t=e.trim();t.startsWith("#")&&(t=t.slice(1)),3===t.length&&(t=t[0]+t[0]+t[1]+t[1]+t[2]+t[2]);const o=parseInt(t,16);return isNaN(o)||(6!==t.length&&8!==t.length)?[1,1,1]:[((o>>16)&255)/255,((o>>8)&255)/255,(255&o)/255]};const dpr=Math.min(window.devicePixelRatio||1,2),renderer=new Renderer({dpr,alpha:!1,antialias:!1}),gl=renderer.gl;container.appendChild(gl.canvas),gl.canvas.style.position="absolute",gl.canvas.style.inset="0",gl.canvas.style.width="100%",gl.canvas.style.height="100%";const gradientTex=new Texture(gl,{image:new Uint8Array([255,255,255,255]),width:1,height:1,generateMipmaps:!1,flipY:!1});gradientTex.minFilter=gl.LINEAR,gradientTex.magFilter=gl.LINEAR,gradientTex.wrapS=gl.CLAMP_TO_EDGE,gradientTex.wrapT=gl.CLAMP_TO_EDGE;const program=new Program(gl,{vertex:vertexShader,fragment:fragmentShader,uniforms:{uResolution:{value:[1,1]},uTime:{value:0},uIntensity:{value:2},uSpeed:{value:.5},uAnimType:{value:1},uMouse:{value:[.5,.5]},uColorCount:{value:0},uDistort:{value:1},uOffset:{value:[0,0]},uGradient:{value:gradientTex},uNoiseAmount:{value:.8},uRayCount:{value:24}}});if(Array.isArray(options.colors)&&options.colors.length>0){const e=options.colors.slice(0,64),t=e.length,o=new Uint8Array(4*t);for(let s=0;s<t;s++){const[n,i,a]=hexToRgb01(e[s]);o[4*s+0]=Math.round(255*n),o[4*s+1]=Math.round(255*i),o[4*s+2]=Math.round(255*a),o[4*s+3]=255}Object.assign(gradientTex,{image:o,width:t,height:1,needsUpdate:!0}),program.uniforms.uColorCount.value=t}const mesh=new Mesh(gl,{geometry:new Triangle(gl),program}),resize=()=>{const e=container.clientWidth||1,t=container.clientHeight||1;renderer.setSize(e,t),program.uniforms.uResolution.value=[gl.drawingBufferWidth,gl.drawingBufferHeight]};window.addEventListener("resize",resize,{passive:!0}),resize();const mouseTarget=[.5,.5],mouseSmooth=[.5,.5];container.addEventListener("pointermove",e=>{const t=container.getBoundingClientRect();mouseTarget[0]=(e.clientX-t.left)/Math.max(t.width,1),mouseTarget[1]=(e.clientY-t.top)/Math.max(t.height,1)},{passive:!0});let raf,last=performance.now(),accumTime=0;const update=e=>{const t=Math.max(0,e-last)*.001;last=e,accumTime+=t;const o=.02+Math.max(0,Math.min(1,0))*.5,s=1-Math.exp(-t/o);mouseSmooth[0]+=(mouseTarget[0]-mouseSmooth[0])*s,mouseSmooth[1]+=(mouseTarget[1]-mouseSmooth[1])*s,program.uniforms.uMouse.value=mouseSmooth,program.uniforms.uTime.value=accumTime,renderer.render({scene:mesh}),raf=requestAnimationFrame(update)};raf=requestAnimationFrame(update);
-                } else {
-                    console.warn("Prismatic Burst loader skipped: ogl library not found or loader element missing.");
-                }
-            } catch (error) {
-                console.error("Error creating Prismatic Burst loader:", error);
-            }
+        if (uRayCount > 0) {
+            float ang = atan(Pb.y, Pb.x);
+            float comb = 0.5 + 0.5 * cos(float(uRayCount) * ang);
+            comb = pow(comb, 3.0);
+            rayPattern *= smoothstep(0.15, 0.95, comb);
         }
 
-        // 이미지 슬라이더를 로드하고 콘텐츠를 표시하는 함수
-        function runSliderAndReveal() {
-            if (!sliderContainer) {
-                // 슬라이더 컨테이너가 없으면 바로 콘텐츠 표시
-                revealContent();
-                return;
-            }
+        vec3 spectralDefault = 1.0 + vec3(
+            cos(marchT * 3.0 + 0.0),
+            cos(marchT * 3.0 + 1.0),
+            cos(marchT * 3.0 + 2.0)
+        );
 
-            let autoSlideInterval = null, slides = [], currentSlideIndex = 0;
-            const googleSheetCsvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRaZqc0MDueHuaig5Myw8_VGEzcyqA1f4V1iES2VutXXpfVeGpdFdzT-guu5oNSmkUVhBtsWD4uQx8J/pub?gid=0&single=true&output=csv';
-            const fallbackImages = ['https://imgur.com/FI5PGR9.jpeg', 'https://imgur.com/7k5WbTf.jpeg', 'https://imgur.com/NCDJ6ZU.jpeg'];
+        float saw = fract(marchT * 0.25);
+        float tRay = saw * saw * (3.0 - 2.0 * saw);
+        vec3 userGradient = 2.0 * sampleGradient(tRay);
+        vec3 spectral = (uColorCount > 0) ? userGradient : spectralDefault;
+        vec3 base = (0.05 / (0.4 + stepLen))
+                  * smoothstep(5.0, 0.0, rad)
+                  * spectral;
 
-            function showSlide(index) {
-                if (slides.length <= 1) return;
-                slides.forEach(slide => slide.classList.remove('active'));
-                currentSlideIndex = (index + slides.length) % slides.length;
-                slides[currentSlideIndex].classList.add('active');
-            }
-            
-            function initializeSlider(images) {
-                if (!images || images.length === 0) return;
-                
-                for (let i = images.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [images[i], images[j]] = [images[j], images[i]];
-                }
-                
-                sliderContainer.innerHTML = '';
-                images.forEach(url => {
-                    const slideDiv = document.createElement('div');
-                    slideDiv.className = 'slide bg-cover bg-center';
-                    slideDiv.style.backgroundImage = `url('${url}')`;
-                    sliderContainer.appendChild(slideDiv);
-                });
-                slides = sliderContainer.querySelectorAll('.slide');
-                
-                if (slides.length > 0) {
-                    slides[0].classList.add('active');
-                    if (autoSlideInterval) clearInterval(autoSlideInterval);
-                    if (slides.length > 1) {
-                        autoSlideInterval = setInterval(() => showSlide(currentSlideIndex + 1), 5000);
-                    }
-                }
-            }
+        col += base * rayPattern;
+        marchT += stepLen;
+    }
 
-            let imagesLoaded = false;
-            fetch(googleSheetCsvUrl)
-                .then(response => response.ok ? response.text() : Promise.reject('Network error'))
-                .then(csvText => {
-                    const sheetImages = csvText.split(/\r?\n/).map(row => row.trim()).filter(url => url.startsWith('http'));
-                    initializeSlider(sheetImages.length > 0 ? sheetImages : fallbackImages);
-                })
-                .catch(error => {
-                    console.error('Failed to fetch from Google Sheet, using fallback images.', error);
-                    initializeSlider(fallbackImages);
-                })
-                .finally(() => {
-                    imagesLoaded = true;
-                    setTimeout(revealContent, 1000); 
-                });
+    col *= edgeFade(frag, uResolution, uOffset);
+    col *= uIntensity;
 
-             setTimeout(() => {
-                if (!imagesLoaded) {
-                    console.log("Fetch timeout, revealing content with fallback.");
-                    initializeSlider(fallbackImages);
-                    revealContent();
-                }
-            }, 5000);
-        }
+    fragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
+}`;
 
-        // 나머지 페이지 인터랙션(스크롤, 모달 등)을 설정하는 함수
-        function setupPageInteractivity() {
-            window.addEventListener('scroll', function() {
-                header.classList.toggle('header-scrolled', window.scrollY > 50);
-            });
+const hexToRgb01 = hex => {
+  let h = hex.trim();
+  if (h.startsWith('#')) h = h.slice(1);
+  if (h.length === 3) {
+    const r = h[0],
+      g = h[1],
+      b = h[2];
+    h = r + r + g + g + b + b;
+  }
+  const intVal = parseInt(h, 16);
+  if (isNaN(intVal) || (h.length !== 6 && h.length !== 8)) return [1, 1, 1];
+  const r = ((intVal >> 16) & 255) / 255;
+  const g = ((intVal >> 8) & 255) / 255;
+  const b = (intVal & 255) / 255;
+  return [r, g, b];
+};
 
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.1 });
-            
-            document.querySelectorAll('#services .scroll-reveal, footer .scroll-reveal').forEach(el => observer.observe(el));
+const toPx = v => {
+  if (v == null) return 0;
+  if (typeof v === 'number') return v;
+  const s = String(v).trim();
+  const num = parseFloat(s.replace('px', ''));
+  return isNaN(num) ? 0 : num;
+};
 
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const targetElement = document.querySelector(this.getAttribute('href'));
-                    if (targetElement) {
-                        targetElement.scrollIntoView({ behavior: 'smooth' });
-                    }
-                });
-            });
+const PrismaticBurst = ({
+  intensity = 2,
+  speed = 0.5,
+  animationType = 'rotate3d',
+  colors,
+  distort = 0,
+  paused = false,
+  offset = { x: 0, y: 0 },
+  hoverDampness = 0,
+  rayCount,
+  mixBlendMode = 'lighten'
+}) => {
+  const containerRef = useRef(null);
+  const programRef = useRef(null);
+  const rendererRef = useRef(null);
+  const mouseTargetRef = useRef([0.5, 0.5]);
+  const mouseSmoothRef = useRef([0.5, 0.5]);
+  const pausedRef = useRef(paused);
+  const gradTexRef = useRef(null);
+  const hoverDampRef = useRef(hoverDampness);
+  const isVisibleRef = useRef(true);
+  const meshRef = useRef(null);
+  const triRef = useRef(null);
 
-            const modal = document.getElementById('external-link-modal');
-            const modalContent = document.getElementById('modal-content');
-            const confirmBtn = document.getElementById('modal-confirm');
-            const cancelBtn = document.getElementById('modal-cancel');
-            
-            document.querySelectorAll('.external-link').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    confirmBtn.href = this.href;
-                    modal.classList.remove('hidden');
-                    modal.classList.add('flex');
-                    setTimeout(() => {
-                        modal.classList.add('visible');
-                        modalContent.classList.add('visible');
-                    }, 10);
-                });
-            });
+  useEffect(() => {
+    pausedRef.current = paused;
+  }, [paused]);
+  useEffect(() => {
+    hoverDampRef.current = hoverDampness;
+  }, [hoverDampness]);
 
-            function closeModal() {
-                modal.classList.remove('visible');
-                modalContent.classList.remove('visible');
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                }, 300);
-            }
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
 
-            cancelBtn.addEventListener('click', closeModal);
-            modal.addEventListener('click', (e) => (e.target === modal) && closeModal());
-            confirmBtn.addEventListener('click', closeModal);
-
-            const tabsContainer = document.getElementById('service-tabs');
-            const tabs = document.querySelectorAll('.service-tab');
-            const tabContents = document.querySelectorAll('.service-tab-content');
-            const tabGlider = document.getElementById('tab-glider');
-            
-            if (tabsContainer && tabs.length > 0 && tabGlider) {
-                const moveGlider = () => {
-                    const activeTab = tabsContainer.querySelector('.service-tab.active');
-                    if (activeTab) {
-                        tabGlider.style.width = `${activeTab.offsetWidth}px`;
-                        tabGlider.style.height = `${activeTab.offsetHeight}px`;
-                        tabGlider.style.left = `${activeTab.offsetLeft}px`;
-                        tabGlider.style.top = `${activeTab.offsetTop}px`;
-                    }
-                };
-                
-                tabs.forEach(tab => {
-                    tab.addEventListener('click', (e) => {
-                        tabs.forEach(t => t.classList.remove('active'));
-                        e.currentTarget.classList.add('active');
-                        moveGlider();
-                        const targetId = e.currentTarget.dataset.tab + '-content';
-                        tabContents.forEach(content => {
-                            if (content.id !== targetId) {
-                                content.classList.add('opacity-0');
-                                setTimeout(() => content.classList.add('hidden'), 400);
-                            }
-                        });
-                        const targetContent = document.getElementById(targetId);
-                        if (targetContent) {
-                            targetContent.classList.remove('hidden');
-                            setTimeout(() => targetContent.classList.remove('opacity-0'), 50);
-                        }
-                    });
-                });
-
-                window.addEventListener('load', moveGlider);
-                window.addEventListener('resize', moveGlider);
-            }
-        }
-
-        // --- 3. 스크립트 실행 ---
-        runAnimatedLoader();
-        runSliderAndReveal();
-        setupPageInteractivity();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const renderer = new Renderer({
+      dpr,
+      alpha: false,
+      antialias: false
     });
-    </script>
-</body>
-</html>
+    rendererRef.current = renderer;
 
+    const gl = renderer.gl;
+    gl.canvas.style.position = 'absolute';
+    gl.canvas.style.inset = '0';
+    gl.canvas.style.width = '100%';
+    gl.canvas.style.height = '100%';
+    gl.canvas.style.mixBlendMode = mixBlendMode && mixBlendMode !== 'none' ? mixBlendMode : '';
+    container.appendChild(gl.canvas);
+
+    const white = new Uint8Array([255, 255, 255, 255]);
+    const gradientTex = new Texture(gl, {
+      image: white,
+      width: 1,
+      height: 1,
+      generateMipmaps: false,
+      flipY: false
+    });
+
+    gradientTex.minFilter = gl.LINEAR;
+    gradientTex.magFilter = gl.LINEAR;
+    gradientTex.wrapS = gl.CLAMP_TO_EDGE;
+    gradientTex.wrapT = gl.CLAMP_TO_EDGE;
+    gradTexRef.current = gradientTex;
+
+    const program = new Program(gl, {
+      vertex: vertexShader,
+      fragment: fragmentShader,
+      uniforms: {
+        uResolution: { value: [1, 1] },
+        uTime: { value: 0 },
+
+        uIntensity: { value: 1 },
+        uSpeed: { value: 1 },
+        uAnimType: { value: 0 },
+        uMouse: { value: [0.5, 0.5] },
+        uColorCount: { value: 0 },
+        uDistort: { value: 0 },
+        uOffset: { value: [0, 0] },
+        uGradient: { value: gradientTex },
+        uNoiseAmount: { value: 0.8 },
+        uRayCount: { value: 0 }
+      }
+    });
+
+    programRef.current = program;
+
+    const triangle = new Triangle(gl);
+    const mesh = new Mesh(gl, { geometry: triangle, program });
+    triRef.current = triangle;
+    meshRef.current = mesh;
+
+    const resize = () => {
+      const w = container.clientWidth || 1;
+      const h = container.clientHeight || 1;
+      renderer.setSize(w, h);
+      program.uniforms.uResolution.value = [gl.drawingBufferWidth, gl.drawingBufferHeight];
+    };
+
+    let ro = null;
+    if ('ResizeObserver' in window) {
+      ro = new ResizeObserver(resize);
+      ro.observe(container);
+    } else {
+      window.addEventListener('resize', resize);
+    }
+    resize();
+
+    const onPointer = e => {
+      const rect = container.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / Math.max(rect.width, 1);
+      const y = (e.clientY - rect.top) / Math.max(rect.height, 1);
+      mouseTargetRef.current = [Math.min(Math.max(x, 0), 1), Math.min(Math.max(y, 0), 1)];
+    };
+    container.addEventListener('pointermove', onPointer, { passive: true });
+
+    let io = null;
+    if ('IntersectionObserver' in window) {
+      io = new IntersectionObserver(
+        entries => {
+          if (entries[0]) {
+            isVisibleRef.current = entries[0].isIntersecting;
+          }
+        },
+        { root: null, threshold: 0.01 }
+      );
+      io.observe(container);
+    }
+
+    const onVis = () => {};
+    document.addEventListener('visibilitychange', onVis);
+
+    let raf = 0;
+    let last = performance.now();
+    let accumTime = 0;
+
+    const update = now => {
+      const dt = Math.max(0, now - last) * 0.001;
+      last = now;
+      const visible = isVisibleRef.current && !document.hidden;
+      if (!pausedRef.current) accumTime += dt;
+
+      if (!visible) {
+        raf = requestAnimationFrame(update);
+        return;
+      }
+
+      const tau = 0.02 + Math.max(0, Math.min(1, hoverDampRef.current)) * 0.5;
+      const alpha = 1 - Math.exp(-dt / tau);
+      const tgt = mouseTargetRef.current;
+      const sm = mouseSmoothRef.current;
+      sm[0] += (tgt[0] - sm[0]) * alpha;
+      sm[1] += (tgt[1] - sm[1]) * alpha;
+
+      program.uniforms.uMouse.value = sm;
+      program.uniforms.uTime.value = accumTime;
+
+      renderer.render({ scene: meshRef.current });
+      raf = requestAnimationFrame(update);
+    };
+    raf = requestAnimationFrame(update);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      container.removeEventListener('pointermove', onPointer);
+      ro?.disconnect();
+      if (!ro) window.removeEventListener('resize', resize);
+      io?.disconnect();
+      document.removeEventListener('visibilitychange', onVis);
+      try {
+        container.removeChild(gl.canvas);
+      } catch {
+        console.warn('Canvas already removed');
+      }
+      try {
+        meshRef.current?.remove?.();
+      } catch (e) {
+        /* ignore dispose errors */
+      }
+      try {
+        triRef.current?.remove?.();
+      } catch (e) {
+        /* ignore dispose errors */
+      }
+      try {
+        programRef.current?.remove?.();
+      } catch (e) {
+        /* ignore dispose errors */
+      }
+      try {
+        const glCtx = rendererRef.current?.gl;
+        if (glCtx && gradTexRef.current?.texture) {
+          glCtx.deleteTexture(gradTexRef.current.texture);
+        }
+      } catch (e) {
+        /* ignore texture delete errors */
+      }
+      programRef.current = null;
+      rendererRef.current = null;
+      gradTexRef.current = null;
+      meshRef.current = null;
+      triRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const canvas = rendererRef.current?.gl?.canvas;
+
+    if (canvas) {
+      canvas.style.mixBlendMode = mixBlendMode && mixBlendMode !== 'none' ? mixBlendMode : '';
+    }
+  }, [mixBlendMode]);
+
+  useEffect(() => {
+    const program = programRef.current;
+    const renderer = rendererRef.current;
+    const gradTex = gradTexRef.current;
+    if (!program || !renderer || !gradTex) return;
+
+    program.uniforms.uIntensity.value = intensity ?? 1;
+    program.uniforms.uSpeed.value = speed ?? 1;
+
+    const animTypeMap = {
+      rotate: 0,
+      rotate3d: 1,
+      hover: 2
+    };
+    program.uniforms.uAnimType.value = animTypeMap[animationType ?? 'rotate'];
+
+    program.uniforms.uDistort.value = typeof distort === 'number' ? distort : 0;
+
+    const ox = toPx(offset?.x);
+    const oy = toPx(offset?.y);
+    program.uniforms.uOffset.value = [ox, oy];
+    program.uniforms.uRayCount.value = Math.max(0, Math.floor(rayCount ?? 0));
+
+    let count = 0;
+    if (Array.isArray(colors) && colors.length > 0) {
+      const gl = renderer.gl;
+      const capped = colors.slice(0, 64);
+      count = capped.length;
+      const data = new Uint8Array(count * 4);
+      for (let i = 0; i < count; i++) {
+        const [r, g, b] = hexToRgb01(capped[i]);
+        data[i * 4 + 0] = Math.round(r * 255);
+        data[i * 4 + 1] = Math.round(g * 255);
+        data[i * 4 + 2] = Math.round(b * 255);
+        data[i * 4 + 3] = 255;
+      }
+      gradTex.image = data;
+      gradTex.width = count;
+      gradTex.height = 1;
+      gradTex.minFilter = gl.LINEAR;
+      gradTex.magFilter = gl.LINEAR;
+      gradTex.wrapS = gl.CLAMP_TO_EDGE;
+      gradTex.wrapT = gl.CLAMP_TO_EDGE;
+      gradTex.flipY = false;
+      gradTex.generateMipmaps = false;
+      gradTex.format = gl.RGBA;
+      gradTex.type = gl.UNSIGNED_BYTE;
+      gradTex.needsUpdate = true;
+    } else {
+      count = 0;
+    }
+    program.uniforms.uColorCount.value = count;
+  }, [intensity, speed, animationType, colors, distort, offset, rayCount]);
+
+  return <div className="prismatic-burst-container" ref={containerRef} />;
+};
+
+export default PrismaticBurst;
