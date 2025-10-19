@@ -82,7 +82,7 @@
                 </div>
 
                 <div id="service-content" class="scroll-reveal max-w-4xl mx-auto">
-                    <div id="calculator-content" class="service-tab-content service-card p-8 md:p-14">
+                    <div id="calculator-content" class="service-tab-content service-card p-8 md:p-14" data-visible="true">
                         <div class="grid md:grid-cols-2 gap-10 items-center">
                             <div>
                                 <img src="https://i.imgur.com/1EiNSrz.png" alt="견적기 예시" class="rounded-xl shadow-lg w-full">
@@ -95,7 +95,7 @@
                         </div>
                     </div>
 
-                    <div id="installment-content" class="service-tab-content service-card p-8 md:p-14 hidden opacity-0">
+                    <div id="installment-content" class="service-tab-content service-card p-8 md:p-14 hidden" data-visible="false">
                         <div class="grid md:grid-cols-2 gap-10 items-center">
                             <div>
                                 <img src="https://imgur.com/u3gDVEb.png" alt="할부 계산기" class="rounded-xl shadow-lg w-full">
@@ -108,7 +108,7 @@
                         </div>
                     </div>
 
-                    <div id="tracker-content" class="service-tab-content service-card p-8 md:p-14 hidden opacity-0">
+                    <div id="tracker-content" class="service-tab-content service-card p-8 md:p-14 hidden" data-visible="false">
                         <div class="grid md:grid-cols-2 gap-10 items-center">
                             <div>
                                 <img src="https://i.imgur.com/MiWjT9J.png" alt="계약 조회" class="rounded-xl shadow-lg w-full">
@@ -120,6 +120,14 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- 임시 안내 메시지 (나중에 제거 가능) -->
+                <div class="mt-8 text-center">
+                    <p class="text-sm text-gray-500 bg-yellow-50 border border-yellow-200 rounded-lg p-4 max-w-2xl mx-auto">
+                        <i class="fas fa-info-circle text-yellow-600 mr-2"></i>
+                        현재 계산기 및 조회 시스템을 준비 중입니다. 자세한 문의는 전화 상담을 이용해 주세요.
+                    </p>
                 </div>
             </div>
         </section>
@@ -172,9 +180,9 @@
                     <div>
                         <h4 class="font-semibold text-white mb-4">팔로우</h4>
                         <div class="flex gap-4">
-                            <a href="#" class="footer-link"><i class="fas fa-facebook-f"></i></a>
-                            <a href="#" class="footer-link"><i class="fas fa-instagram"></i></a>
-                            <a href="#" class="footer-link"><i class="fas fa-youtube"></i></a>
+                            <a href="#" class="footer-link"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="footer-link"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="footer-link"><i class="fab fa-youtube"></i></a>
                         </div>
                     </div>
                 </div>
@@ -184,20 +192,6 @@
             </div>
         </div>
     </footer>
-
-    <div id="external-link-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4 backdrop-blur-sm transition-opacity duration-300">
-        <div id="modal-content" class="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md text-center transform scale-95 opacity-0 transition-all duration-300">
-            <div class="mb-6">
-                <i class="fas fa-external-link-alt text-blue-800 text-4xl"></i>
-            </div>
-            <h3 class="text-2xl font-bold text-gray-800 mb-3">페이지 이동</h3>
-            <p class="text-gray-600 mb-8">선택하신 페이지로 이동하시겠습니까?</p>
-            <div class="flex justify-center gap-4">
-                <button id="modal-cancel" class="bg-slate-100 text-gray-700 font-bold py-2.5 px-6 rounded-lg hover:bg-slate-200 transition-colors">취소</button>
-                <a id="modal-confirm" href="#" target="_blank" class="bg-blue-800 text-white font-bold py-2.5 px-6 rounded-lg cta-button">이동</a>
-            </div>
-        </div>
-    </div>
 
     <script>
 const vs=`#version 300 es
@@ -235,38 +229,6 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     });
   });
-
-  const modal = document.getElementById("external-link-modal");
-  const modalContent = document.getElementById("modal-content");
-  const confirmBtn = document.getElementById("modal-confirm");
-  const cancelBtn = document.getElementById("modal-cancel");
-
-  function closeModal() {
-    modal.classList.remove("visible");
-    modalContent.classList.remove("visible");
-    setTimeout(() => {
-      modal.classList.add("hidden");
-    }, 300);
-  }
-
-  document.querySelectorAll(".external-link").forEach((link) => {
-    link.addEventListener("click", function(e) {
-      e.preventDefault();
-      confirmBtn.href = this.href;
-      modal.classList.remove("hidden");
-      modal.classList.add("flex");
-      setTimeout(() => {
-        modal.classList.add("visible");
-        modalContent.classList.add("visible");
-      }, 10);
-    });
-  });
-
-  cancelBtn.addEventListener("click", closeModal);
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) closeModal();
-  });
-  confirmBtn.addEventListener("click", closeModal);
 
   const sliderContainer = document.getElementById("hero-slider-container");
   if (sliderContainer) {
@@ -338,12 +300,15 @@ document.addEventListener("DOMContentLoaded", function() {
       });
   }
 
+  // 개선된 탭 전환 로직
   const tabsContainer = document.getElementById("service-tabs");
   const tabs = document.querySelectorAll(".service-tab");
   const tabContents = document.querySelectorAll(".service-tab-content");
   const tabGlider = document.getElementById("tab-glider");
 
   if (tabsContainer && tabs.length > 0 && tabGlider) {
+    let isAnimating = false;  // 애니메이션 중복 방지 플래그
+    
     const updateGliderPosition = () => {
       const activeTab = tabsContainer.querySelector(".service-tab.active");
       if (activeTab) {
@@ -356,29 +321,59 @@ document.addEventListener("DOMContentLoaded", function() {
 
     tabs.forEach((tab) => {
       tab.addEventListener("click", (e) => {
+        // 이미 애니메이션 중이면 무시
+        if (isAnimating) return;
+        
+        // 이미 활성화된 탭을 클릭하면 무시
+        if (e.currentTarget.classList.contains("active")) return;
+        
+        isAnimating = true;
+        
+        // 이전 활성 탭 비활성화
         tabs.forEach((t) => t.classList.remove("active"));
         e.currentTarget.classList.add("active");
         
-        setTimeout(() => {
-          updateGliderPosition();
-        }, 0);
+        // 글라이더 위치 즉시 업데이트
+        updateGliderPosition();
 
         const tabId = e.currentTarget.dataset.tab + "-content";
+        
+        // 현재 보이는 콘텐츠 숨기기
         tabContents.forEach((content) => {
-          if (content.id !== tabId) {
-            content.classList.add("opacity-0");
-            setTimeout(() => content.classList.add("hidden"), 400);
+          if (content.dataset.visible === "true") {
+            content.dataset.visible = "false";
+            content.style.opacity = "0";
+            content.style.transition = "opacity 0.3s ease-out";
           }
         });
-
-        const activeContent = document.getElementById(tabId);
-        if (activeContent) {
-          activeContent.classList.remove("hidden");
-          setTimeout(() => activeContent.classList.remove("opacity-0"), 50);
-        }
+        
+        // 새로운 콘텐츠 표시
+        setTimeout(() => {
+          tabContents.forEach((content) => {
+            if (content.id !== tabId) {
+              content.classList.add("hidden");
+            }
+          });
+          
+          const activeContent = document.getElementById(tabId);
+          if (activeContent) {
+            activeContent.classList.remove("hidden");
+            activeContent.dataset.visible = "true";
+            // 리플로우 강제
+            void activeContent.offsetHeight;
+            activeContent.style.opacity = "1";
+            activeContent.style.transition = "opacity 0.3s ease-in";
+          }
+          
+          // 애니메이션 완료 후 플래그 리셋
+          setTimeout(() => {
+            isAnimating = false;
+          }, 300);
+        }, 300);
       });
     });
 
+    // 초기화
     setTimeout(() => updateGliderPosition(), 100);
     window.addEventListener("load", () => setTimeout(() => updateGliderPosition(), 50));
     window.addEventListener("resize", updateGliderPosition);
